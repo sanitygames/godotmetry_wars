@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dhgp0ixsiiipg"]
 
-[ext_resource type="Script" uid="uid://uuf82erjetnj" path="res://geometry.gd" id="1_wtcfe"]
+[ext_resource type="Script" uid="uid://uuf82erjetnj" path="res://geometry_prev.gd" id="1_wtcfe"]
 [ext_resource type="Texture2D" uid="uid://ft4bfv02m05a" path="res://icon.svg" id="2_0e48y"]
 [ext_resource type="Script" uid="uid://bal36madx8pv0" path="res://grid2.gd" id="3_epypp"]
 

@@ -1,3 +1,33 @@
 [gd_scene format=3 uid="uid://b76ntn8npax80"]
 
+[ext_resource type="Script" uid="uid://crxcwu1vq2vgl" path="res://geometry.gd" id="1_uf6ts"]
+[ext_resource type="Texture2D" uid="uid://ft4bfv02m05a" path="res://icon.svg" id="2_xcskt"]
+
+[sub_resource type="Environment" id="Environment_xcskt"]
+background_mode = 3
+glow_enabled = true
+glow_intensity = 3.69
+glow_strength = 1.27
+glow_bloom = 0.81
+
 [node name="Geometry" type="Node2D" unique_id=619483854]
+script = ExtResource("1_uf6ts")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1150828047]
+environment = SubResource("Environment_xcskt")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=698126992]
+position = Vector2(590, 309)
+scale = Vector2(1.0000001, 1.0000001)
+zoom = Vector2(3.67, 3.67)
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1060138587]
+position = Vector2(589, 301)
+scale = Vector2(0.36, 0.36)
+texture = ExtResource("2_xcskt")
+
+[node name="Timer" type="Timer" parent="." unique_id=2014605917]
+wait_time = 0.1
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
