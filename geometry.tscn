@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://crxcwu1vq2vgl" path="res://geometry.gd" id="1_uf6ts"]
 [ext_resource type="Texture2D" uid="uid://ft4bfv02m05a" path="res://icon.svg" id="2_xcskt"]
+[ext_resource type="Shader" uid="uid://bh8aenm4u6w8w" path="res://bullet.gdshader" id="3_oowuu"]
+[ext_resource type="Texture2D" uid="uid://w5ifgp66e1n2" path="res://1x1white.png" id="4_yxtvf"]
 
 [sub_resource type="Environment" id="Environment_xcskt"]
 background_mode = 3
@@ -10,24 +12,36 @@ glow_intensity = 3.69
 glow_strength = 1.27
 glow_bloom = 0.81
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yxtvf"]
+shader = ExtResource("3_oowuu")
+
 [node name="Geometry" type="Node2D" unique_id=619483854]
 script = ExtResource("1_uf6ts")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1150828047]
 environment = SubResource("Environment_xcskt")
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=698126992]
-position = Vector2(590, 309)
-scale = Vector2(1.0000001, 1.0000001)
-zoom = Vector2(3.67, 3.67)
-
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1060138587]
-position = Vector2(589, 301)
-scale = Vector2(0.36, 0.36)
-texture = ExtResource("2_xcskt")
-
 [node name="Timer" type="Timer" parent="." unique_id=2014605917]
 wait_time = 0.1
 autostart = true
+
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=1964011418]
+material = SubResource("ShaderMaterial_yxtvf")
+position = Vector2(492, 278)
+scale = Vector2(8, 16)
+texture = ExtResource("4_yxtvf")
+region_rect = Rect2(0, 0, 1.247057, 1.0561342)
+
+[node name="Player" type="Node2D" parent="." unique_id=420135248]
+position = Vector2(451, 203)
+
+[node name="Sprite2D" type="Sprite2D" parent="Player" unique_id=1060138587]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_xcskt")
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=698126992]
+scale = Vector2(1.0000001, 1.0000001)
+zoom = Vector2(1.5, 1.5)
+limit_enabled = false
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

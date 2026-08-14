@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://kxcoujvul1vs"]
+
+[ext_resource type="Script" uid="uid://cqs7ymonf1c56" path="res://hit_particle.gd" id="1_hhyet"]
+
+[sub_resource type="Gradient" id="Gradient_1bvp3"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_lquwl"]
+gradient = SubResource("Gradient_1bvp3")
+width = 1
+height = 8
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5vw27"]
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+angle_min = 1.0728835e-05
+angle_max = 310.2
+direction = Vector3(0, 0, 0)
+spread = 180.0
+initial_velocity_min = 42.89
+initial_velocity_max = 290.68
+angular_velocity_min = -1103.13
+angular_velocity_max = 664.14996
+gravity = Vector3(0, 0, 0)
+linear_accel_min = -21.750002
+linear_accel_max = 20.939997
+scale_max = 1.1
+color = Color(3.0431557, 1.7216675, 0, 1)
+
+[node name="HitParticle" type="GPUParticles2D" unique_id=1512716476]
+texture_filter = 1
+emitting = false
+amount = 20
+texture = SubResource("GradientTexture2D_lquwl")
+lifetime = 0.3
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_5vw27")
+script = ExtResource("1_hhyet")
+
+[connection signal="finished" from="." to="." method="_on_finished"]
