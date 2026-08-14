@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://dhgp0ixsiiipg"]
+
+[ext_resource type="Script" uid="uid://uuf82erjetnj" path="res://geometry.gd" id="1_wtcfe"]
+[ext_resource type="Texture2D" uid="uid://ft4bfv02m05a" path="res://icon.svg" id="2_0e48y"]
+[ext_resource type="Script" uid="uid://bal36madx8pv0" path="res://grid2.gd" id="3_epypp"]
+
+[sub_resource type="Environment" id="Environment_wtcfe"]
+background_mode = 3
+glow_enabled = true
+glow_normalized = true
+glow_strength = 0.06
+
+[node name="Node2D" type="Node2D" unique_id=66253836]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1782551271]
+environment = SubResource("Environment_wtcfe")
+
+[node name="Node2D" type="Node2D" parent="." unique_id=385303193]
+self_modulate = Color(4.2165008, 4.2165008, 4.2165008, 1)
+script = ExtResource("1_wtcfe")
+
+[node name="Icon" type="Sprite2D" parent="." unique_id=696878417]
+position = Vector2(383, 434)
+texture = ExtResource("2_0e48y")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1147037303]
+position = Vector2(401, 317)
+zoom = Vector2(2.07, 2.07)
+
+[node name="Node2D2" type="Node2D" parent="." unique_id=1942080795]
+script = ExtResource("3_epypp")
