@@ -1,9 +1,9 @@
 extends Node2D
 
-const GRID_SIZE := Vector2i(48, 48)
+const GRID_SIZE := Vector2i(48, 36)
 const GRID_SPACING := 20.0
-const SPRING_K := 140.0
-const NEIGHBOR_K := 2.0
+const SPRING_K := 320.0
+const NEIGHBOR_K := 0.8
 const DAMPING := 0.90
 
 # var force_radius := 100.0
@@ -16,6 +16,7 @@ var positions := PackedVector2Array()
 var velocities := PackedVector2Array()
 var idxs := PackedInt32Array()
 var didxs := PackedInt32Array()
+var draw_points := PackedVector2Array()
 
 var flag := false
 
@@ -45,7 +46,7 @@ func _ready() -> void:
 			didxs.append(get_idx(x, y + 1))
 
 	forces.resize(400)
-	forces.fill(Vector4.ZERO)
+	draw_points.resize(didxs.size())
 
 
 func set_data(_bs: PackedByteArray, ps: PackedVector2Array, fs: PackedVector2Array) -> void:
@@ -57,34 +58,39 @@ func set_data(_bs: PackedByteArray, ps: PackedVector2Array, fs: PackedVector2Arr
 			forces[forces_size].z = fs[i].x
 			forces[forces_size].w = fs[i].y
 			forces_size += 1
-			# forces.append([ps[i], fs[i].x, fs[i].y])
 
 
 func update(delta: float) -> void:
-	# print("SIZE: ", forces.size())
+	# var start = Time.get_ticks_usec()
 	for i in forces_size:
-		for idx in idxs:
-			var pos = Vector2(forces[i].x, forces[i].y)
-			var dist = pos.distance_to(positions[idx])
-			if dist < forces[i].z:
-				var dir = (pos - positions[idx]).normalized()
-				var fac = cos(dist / forces[i].z)
-				velocities[idx] += dir * forces[i].w * fac * delta
+		var lx = forces[i].x - forces[i].z
+		var rx = forces[i].x + forces[i].z
+		var ly = forces[i].y - forces[i].z
+		var ry = forces[i].y + forces[i].z
+		lx = floor(lx / 20.0)
+		rx = ceil(rx / 20.0)
+		ly = floor(ly / 20.0)
+		ry = ceil(ry / 20.0)
 
-	# for _force in forces:
-	# 	apply_force(_force[0] + Vector2(80, 80), delta, _force[1], _force[2])
+		var r_sq = forces[i].z * forces[i].z
+		for y in range(max(ly - 1, 0), min(ry + 1, GRID_SIZE.y)):
+			for x in range(max(lx - 1, 0), min(rx + 1, GRID_SIZE.x)):
+				var spos = positions[get_idx(x, y)]
+				var fpos = Vector2(forces[i].x, forces[i].y)
+				# TODO: distance_to_sqrt
+				var d = spos - fpos
+				var dist_sq = d.x * d.x + d.y * d.y
+				if dist_sq < r_sq:
+					var dir = d.normalized()
+					# TODO: facの関数について
+					# var fac = dist_sq / r_sq
+					var fac = cos(sqrt(dist_sq) / forces[i].z)
+					velocities[get_idx(x, y)] += dir * forces[i].w * fac * delta
 
 	update_physics(delta)
 	queue_redraw()
-
-
-func apply_force(pos: Vector2, delta: float, _force_radius: float, force_strength: float) -> void:
-	for idx in idxs:
-		var dist = pos.distance_to(positions[idx])
-		if dist < _force_radius:
-			var dir = (pos - positions[idx]).normalized()
-			var fac = dist / _force_radius
-			velocities[idx] += dir * force_strength * fac * delta
+	# var end = Time.get_ticks_usec()
+	# print(end - start)
 
 
 func update_physics(delta: float) -> void:
@@ -99,13 +105,14 @@ func update_physics(delta: float) -> void:
 		velocities[idx] *= DAMPING
 		positions[idx] += velocities[idx] * delta
 
+	var i = 0
+	for idx in didxs:
+		draw_points[i] = positions[idx]
+		i += 1
+
 
 func _draw() -> void:
-	var _ps = PackedVector2Array()
-	for idx in didxs:
-		_ps.append(positions[idx])
-
-	draw_multiline(_ps, grid_color)
+	draw_multiline(draw_points, grid_color)
 
 
 func get_idx(x: int, y: int) -> int:

@@ -56,7 +56,8 @@ environment = SubResource("Environment_xcskt")
 [node name="Grid" type="Node2D" parent="." unique_id=144578507]
 position = Vector2(-80, -80)
 script = ExtResource("1_ig7tw")
-grid_color = Color(0.28336003, 0.56, 0.123200014, 0.78039217)
+grid_color = Color(0.5913657, 1.1923846, 0.24340747, 0.9843137)
+metadata/_edit_group_ = true
 
 [node name="Player" parent="." unique_id=135505630 instance=ExtResource("3_h2yge")]
 position = Vector2(400, 300)

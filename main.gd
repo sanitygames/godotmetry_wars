@@ -11,8 +11,8 @@ const E3_ENTITY_SIZE := 5
 const E9_ENTITY_SIZE := 200
 const DEF_VEC2 := Vector2(9999, 9999)
 
-const PLAYER_FORCE := Vector2(100, 3000)
-const SHOT_FORCE := Vector2(50, 1000)
+const PLAYER_FORCE := Vector2(100, 5000)
+const SHOT_FORCE := Vector2(50, 6000)
 const HIT_PARTICLE_FORCE := Vector2(50, -4000)
 # const E1_FORCE := Vector2(100, 1500)
 # const E2_FORCE := Vector2(100, 1500)
@@ -216,7 +216,7 @@ func _physics_process(delta: float) -> void:
 			flags[_idx] = 1
 			entities[_idx].position = get_e1_position(timer)
 			entities[_idx].visible = true
-			entities[_idx].accell = randf_range(0.8, 1.0 + e1_death * 0.03)
+			entities[_idx].accell = randf_range(0.8, min(1.0 + e1_death * 0.03, 2.0))
 			positions[_idx] = entities[_idx].position
 		e1_idx = (e1_idx + 1) % E1_ENTITY_SIZE
 
