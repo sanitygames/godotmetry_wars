@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://cwa88optl4sk"]
 
+[ext_resource type="Shader" uid="uid://c6tmb4xpbbj82" path="res://chromatic_aberration.gdshader" id="1_dg77c"]
 [ext_resource type="Script" uid="uid://byptirdqlg3rt" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="Script" uid="uid://bk4os1g61mjv5" path="res://grid.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://bxeh00y4hdm3o" path="res://bullet.tscn" id="2_1bvp3"]
@@ -11,6 +12,11 @@
 [ext_resource type="PackedScene" uid="uid://cpkjy0ko0mj1a" path="res://enemy_02.tscn" id="7_efxa6"]
 [ext_resource type="PackedScene" uid="uid://dw3od1jlwaw0a" path="res://death_particle.tscn" id="8_5vw27"]
 [ext_resource type="FontFile" uid="uid://xfvo2y4qm6gf" path="res://x16y32pxGridGazer.ttf" id="11_efxa6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dg77c"]
+shader = ExtResource("1_dg77c")
+shader_parameter/r_offset = 3.0
+shader_parameter/b_offset = -3.0
 
 [sub_resource type="Environment" id="Environment_xcskt"]
 background_mode = 3
@@ -32,6 +38,7 @@ point_count = 5
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_efxa6"]
 
 [node name="Main" type="Node2D" unique_id=1762312842]
+material = SubResource("ShaderMaterial_dg77c")
 script = ExtResource("1_h2yge")
 shot_inst = ExtResource("2_1bvp3")
 hit_particle_inst = ExtResource("3_lquwl")

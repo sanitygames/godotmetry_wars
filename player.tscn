@@ -2,9 +2,15 @@
 
 [ext_resource type="Texture2D" uid="uid://cf75p3e3ixoet" path="res://Sprite-0002.png" id="1_4flbx"]
 [ext_resource type="Script" uid="uid://cqtlc0qqka4rv" path="res://player.gd" id="1_onrkg"]
+[ext_resource type="Shader" uid="uid://c6tmb4xpbbj82" path="res://chromatic_aberration.gdshader" id="3_i3pqv"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_h2yge"]
 radius = 7.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hqtel"]
+shader = ExtResource("3_i3pqv")
+shader_parameter/r_offset = -1.1189995781525006
+shader_parameter/b_offset = -3.0
 
 [node name="Player" type="Area2D" unique_id=28638575]
 z_index = 1
@@ -21,4 +27,5 @@ position = Vector2(-1, 0)
 shape = SubResource("CircleShape2D_h2yge")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1708269488]
+material = SubResource("ShaderMaterial_hqtel")
 position_smoothing_enabled = true

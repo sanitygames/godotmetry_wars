@@ -70,6 +70,7 @@ var game_over := false
 
 
 func _ready() -> void:
+	Sound.is_title = false
 	set_process(false)
 	entities.append(player)
 	flags.append(1)
@@ -283,6 +284,7 @@ func spawn_hit_particle(pos: Vector2) -> void:
 			positions[idx] = pos
 			entities[idx].emitting = true
 			hit_idx = (hit_idx + 1) % HIT_PARTICLE_ENTITY_SIZE
+			Sound.shot()
 			break
 		hit_idx = (hit_idx + 1) % HIT_PARTICLE_ENTITY_SIZE
 
@@ -344,6 +346,7 @@ func _on_e1_hit_shot(area: Entity) -> void:
 	var id = area.id
 	entities[id].position = DEF_VEC2
 	flags[id] = 0
+	Sound.hit(1.0)
 
 
 func _on_e1_death(id: int) -> void:
@@ -354,6 +357,7 @@ func _on_e1_death(id: int) -> void:
 	entities[id].visible = false
 	entities[id].position = DEF_VEC2
 	score += 100
+	Sound.bomb(1.0)
 
 
 func _on_e2_hit_shot(area: Entity) -> void:
@@ -361,6 +365,7 @@ func _on_e2_hit_shot(area: Entity) -> void:
 	var id = area.id
 	entities[id].position = DEF_VEC2
 	flags[id] = 0
+	Sound.hit(0.75)
 
 
 func _on_e2_death(id: int) -> void:
@@ -370,6 +375,7 @@ func _on_e2_death(id: int) -> void:
 	entities[id].visible = false
 	entities[id].position = DEF_VEC2
 	score += 1000
+	Sound.bomb(0.75)
 
 
 func _on_e2_shot(id: int) -> void:
@@ -381,6 +387,7 @@ func _on_e3_hit_shot(area: Entity) -> void:
 	var id = area.id
 	entities[id].position = DEF_VEC2
 	flags[id] = 0
+	Sound.hit(0.5)
 
 
 func _on_e3_death(id: int) -> void:
@@ -389,6 +396,7 @@ func _on_e3_death(id: int) -> void:
 	entities[id].visible = false
 	entities[id].position = DEF_VEC2
 	score += 10000
+	Sound.bomb(0.5)
 
 
 func _on_e3_shot(id: int) -> void:
@@ -400,6 +408,7 @@ func _on_e9_hit_shot(area: Entity) -> void:
 	var id = area.id
 	entities[id].position = DEF_VEC2
 	flags[id] = 0
+	Sound.hit(1.2)
 
 
 func _on_e9_death(id: int) -> void:
@@ -414,6 +423,7 @@ func _on_player_area_entered(_area: Area2D) -> void:
 		game_over = true
 		player.visible = false
 		forces[0] = Vector2(600, 100000)
+		GodotplayerScore.submit_score("main", score)
 		await get_tree().create_timer(0.05).timeout
 		forces[0] = Vector2.ZERO
 		for i in range(SHOT_ENTITY_IDX_ORIGIN, SHOT_ENTITY_IDX_ORIGIN + SHOT_ENTITY_SIZE):

@@ -66,7 +66,7 @@ func apply_force(pos: Vector2, delta: float, _force_radius: float, force_strengt
 		var dist = pos.distance_to(positions[idx])
 		if dist < _force_radius:
 			var dir = (pos - positions[idx]).normalized()
-			var fac = cos(dist / _force_radius)
+			var fac = dist / _force_radius
 			velocities[idx] += dir * force_strength * fac * delta
 
 

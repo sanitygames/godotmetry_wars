@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cukbc7fxccv3b"]
+
+[ext_resource type="Script" uid="uid://d1vrmt065t1h" path="res://sound.gd" id="1_3j8lq"]
+[ext_resource type="FontFile" uid="uid://xfvo2y4qm6gf" path="res://x16y32pxGridGazer.ttf" id="2_7ywqe"]
+[ext_resource type="AudioStream" uid="uid://celg4hr4ft4wn" path="res://ogg/1.ogg" id="2_glhti"]
+[ext_resource type="AudioStream" uid="uid://db6evgomrjn5q" path="res://ogg/2.ogg" id="3_kycvu"]
+[ext_resource type="AudioStream" uid="uid://d2hp4ktbvj3g7" path="res://ogg/5.ogg" id="4_glhti"]
+[ext_resource type="AudioStream" uid="uid://ct8u14mevd0d8" path="res://ogg/4.ogg" id="5_v1rld"]
+
+[node name="Sound" type="CanvasLayer" unique_id=1898867413]
+layer = 2
+script = ExtResource("1_3j8lq")
+
+[node name="Start" type="AudioStreamPlayer" parent="." unique_id=574765156]
+stream = ExtResource("2_glhti")
+volume_db = -10.0
+
+[node name="Bomb" type="AudioStreamPlayer" parent="." unique_id=413285435]
+stream = ExtResource("3_kycvu")
+volume_db = -36.526
+pitch_scale = 0.62
+
+[node name="Shot" type="AudioStreamPlayer" parent="." unique_id=1748484362]
+stream = ExtResource("4_glhti")
+volume_db = -47.376
+pitch_scale = 0.8
+
+[node name="Hit" type="AudioStreamPlayer" parent="." unique_id=2042017164]
+stream = ExtResource("5_v1rld")
+volume_db = -36.445
+pitch_scale = 1.37
+
+[node name="Label" type="Label" parent="." unique_id=1470556635]
+offset_left = 627.0
+offset_top = 31.0
+offset_right = 773.0
+offset_bottom = 59.0
+theme_override_fonts/font = ExtResource("2_7ywqe")
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 1
