@@ -56,7 +56,7 @@ environment = SubResource("Environment_xcskt")
 [node name="Grid" type="Node2D" parent="." unique_id=144578507]
 position = Vector2(-80, -80)
 script = ExtResource("1_ig7tw")
-grid_color = Color(0.24369915, 0.51294917, 0, 1)
+grid_color = Color(0.28336003, 0.56, 0.123200014, 0.78039217)
 
 [node name="Player" parent="." unique_id=135505630 instance=ExtResource("3_h2yge")]
 position = Vector2(400, 300)
@@ -140,15 +140,15 @@ default_color = Color(0.1842713, 0.95665276, 0.17118013, 1)
 [node name="ScoreLabel" type="Label" parent="UILayer" unique_id=1640683739]
 self_modulate = Color(0.97, 0.97, 0.97, 1)
 texture_filter = 1
-offset_left = 32.0
 offset_top = 40.0
-offset_right = 147.0
-offset_bottom = 63.0
+offset_right = 224.0
+offset_bottom = 65.0
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("11_efxa6")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxEmpty_efxa6")
 text = "SCORE: 000000"
+horizontal_alignment = 2
 
 [connection signal="area_entered" from="Player" to="." method="_on_player_area_entered"]
 [connection signal="area_entered" from="Wall" to="." method="_on_wall_area_entered"]

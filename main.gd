@@ -174,7 +174,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	timer += delta
 	var go = ["\nGAME OVER\n[R]etry [Q]uit", "\n\n[R]etry [Q]uit"][int(timer) % 2]
-	score_label.text = "SCORE: %06d%s" % [score, go]
+	score_label.text = "HI-SCORE:%06d\nSCORE:%06d%s" % [Score.hi_score, score, go]
 
 	if Input.is_action_just_pressed("retry"):
 		get_tree().reload_current_scene()
@@ -269,7 +269,9 @@ func _physics_process(delta: float) -> void:
 		forces[i].x *= 1.05
 		forces[i].y *= 0.9
 
-	score_label.text = "SCORE: %06d" % [score]
+	Score.hi_score = max(Score.hi_score, score)
+	var rank = Score.ranking.size() - Score.ranking.bsearch(score) + 1
+	score_label.text = "HI-SCORE:%06d\n[%02d]SCORE:%06d" % [Score.hi_score, rank, score]
 
 	grid.set_data(flags, positions, forces)
 	grid.update(delta)
@@ -329,6 +331,7 @@ func _on_wall_area_entered(area: Area2D) -> void:
 	spawn_hit_particle(pos)
 	flags[id] = 0
 	entities[id].position = DEF_VEC2
+	entities[id].dir = Vector2.INF
 
 
 func _on_hit_particle_emit_finished(id: int) -> void:
@@ -422,6 +425,7 @@ func _on_player_area_entered(_area: Area2D) -> void:
 	if !game_over:
 		game_over = true
 		player.visible = false
+		Sound.game_over()
 		forces[0] = Vector2(600, 100000)
 		GodotplayerScore.submit_score("main", score)
 		await get_tree().create_timer(0.05).timeout

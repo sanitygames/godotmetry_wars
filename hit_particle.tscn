@@ -26,7 +26,7 @@ gravity = Vector3(0, 0, 0)
 linear_accel_min = -21.750002
 linear_accel_max = 20.939997
 scale_max = 1.1
-color = Color(3.0431557, 1.7216675, 0, 1)
+color = Color(3.3411722, 1.892568, 0, 1)
 
 [node name="HitParticle" type="GPUParticles2D" unique_id=1512716476]
 texture_filter = 1

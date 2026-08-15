@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 
 Sound="*uid://cukbc7fxccv3b"
 GodotplayerScore="*uid://c52qbux5u0p2p"
+Score="*uid://bq0g0f5vh4ear"
 
 [display]
 
@@ -108,6 +109,7 @@ quit={
 
 [physics]
 
+common/physics_ticks_per_second=30
 3d/physics_engine="Jolt Physics"
 
 [rendering]

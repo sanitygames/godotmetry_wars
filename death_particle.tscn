@@ -9,7 +9,7 @@ colors = PackedColorArray(1, 1, 1, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_up7bd"]
 gradient = SubResource("Gradient_2cb7w")
 width = 1
-height = 10
+height = 12
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kwamp"]
 lifetime_randomness = 1.0
@@ -24,7 +24,7 @@ gravity = Vector3(0, 0, 0)
 linear_accel_min = -96.59
 linear_accel_max = -64.200005
 scale_max = 1.8
-color = Color(0, 0.6184118, 2.4089842, 1)
+color = Color(0, 0.7917321, 3.0431557, 1)
 hue_variation_min = -0.11000002
 hue_variation_max = -0.010000022
 

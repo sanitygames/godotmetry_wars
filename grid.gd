@@ -22,7 +22,8 @@ var flag := false
 var force_pos := Vector2.ZERO
 var force := 0.0
 var force_radius := 0.0
-var forces := []
+var forces := PackedVector4Array()
+var forces_size := 0
 
 
 func _ready() -> void:
@@ -43,19 +44,35 @@ func _ready() -> void:
 			didxs.append(get_idx(x, y))
 			didxs.append(get_idx(x, y + 1))
 
+	forces.resize(400)
+	forces.fill(Vector4.ZERO)
+
 
 func set_data(_bs: PackedByteArray, ps: PackedVector2Array, fs: PackedVector2Array) -> void:
-	forces.clear()
+	forces_size = 0
 	for i in _bs.size():
 		if _bs[i] == 1 && fs[i] != Vector2.ZERO:
-			forces.append([ps[i], fs[i].x, fs[i].y])
+			forces[forces_size].x = ps[i].x + 80.0
+			forces[forces_size].y = ps[i].y + 80.0
+			forces[forces_size].z = fs[i].x
+			forces[forces_size].w = fs[i].y
+			forces_size += 1
+			# forces.append([ps[i], fs[i].x, fs[i].y])
 
 
 func update(delta: float) -> void:
 	# print("SIZE: ", forces.size())
+	for i in forces_size:
+		for idx in idxs:
+			var pos = Vector2(forces[i].x, forces[i].y)
+			var dist = pos.distance_to(positions[idx])
+			if dist < forces[i].z:
+				var dir = (pos - positions[idx]).normalized()
+				var fac = cos(dist / forces[i].z)
+				velocities[idx] += dir * forces[i].w * fac * delta
 
-	for _force in forces:
-		apply_force(_force[0] + Vector2(80, 80), delta, _force[1], _force[2])
+	# for _force in forces:
+	# 	apply_force(_force[0] + Vector2(80, 80), delta, _force[1], _force[2])
 
 	update_physics(delta)
 	queue_redraw()

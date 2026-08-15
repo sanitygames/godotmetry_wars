@@ -5,6 +5,7 @@ var menu := "[S] tart\n[-/+] volume:%02d"
 
 func _ready() -> void:
 	Sound.is_title = true
+	Score.get_ranking()
 
 
 func _process(_delta: float) -> void:
