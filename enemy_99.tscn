@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://cm2ghcjs83e2h"]
+
+[ext_resource type="Script" uid="uid://bwi6802jy7uqv" path="res://enemy_99.gd" id="1_pagj3"]
+[ext_resource type="Shader" uid="uid://d13fok0pkchpy" path="res://circle.gdshader" id="1_y4xwx"]
+[ext_resource type="Texture2D" uid="uid://ft4bfv02m05a" path="res://icon.svg" id="2_y4xwx"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4d44c"]
+shader = ExtResource("1_y4xwx")
+shader_parameter/col = Color(3.5828252, 0.4105036, 2.7897446, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4d44c"]
+radius = 8.0
+
+[node name="Enemy99" type="Area2D" unique_id=2006360758]
+collision_layer = 8
+collision_mask = 3
+script = ExtResource("1_pagj3")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=897438266]
+material = SubResource("ShaderMaterial_4d44c")
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("2_y4xwx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2103267772]
+shape = SubResource("CircleShape2D_4d44c")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

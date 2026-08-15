@@ -1,20 +1,10 @@
-extends Node2D
+extends Entity
+class_name Bullet
 
-signal hitted(pos)
-signal hit(id, pos, body)
-
-var id := 0
+const SPEED := 600
 
 
-func update(delta) -> Vector2:
-	position.x += cos(rotation) * 700 * delta
-	position.y += sin(rotation) * 700 * delta
+func move(delta: float, _d: Dictionary = {}) -> Vector2:
+	position.x += cos(rotation) * SPEED * delta
+	position.y += sin(rotation) * SPEED * delta
 	return position
-
-
-func _on_area_2d_area_entered(area: Area2D) -> void:
-	hitted.emit(position)
-
-
-func _on_area_2d_body_entered(body: Node2D) -> void:
-	hit.emit(id, position, body)

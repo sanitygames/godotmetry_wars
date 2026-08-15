@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://bgh4bmcxaqoig"]
+
+[ext_resource type="Script" uid="uid://3oosj740p54n" path="res://title.gd" id="1_oyqm6"]
+[ext_resource type="FontFile" uid="uid://xfvo2y4qm6gf" path="res://x16y32pxGridGazer.ttf" id="1_y7k74"]
+
+[sub_resource type="Environment" id="Environment_y7k74"]
+background_mode = 3
+background_canvas_max_layer = 1
+glow_enabled = true
+glow_intensity = 3.32
+glow_strength = 1.27
+glow_bloom = 0.28
+
+[node name="Title" type="Control" unique_id=1516422767]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_oyqm6")
+metadata/_edit_vertical_guides_ = [800.0, 400.0]
+metadata/_edit_horizontal_guides_ = [600.0]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=607433175]
+environment = SubResource("Environment_y7k74")
+
+[node name="Label" type="Label" parent="." unique_id=18071775]
+layout_mode = 0
+offset_left = 149.0
+offset_top = 157.0
+offset_right = 642.0
+offset_bottom = 226.0
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 68
+text = "GODOTMETRY WARS"
+
+[node name="Label2" type="Label" parent="." unique_id=1181981779]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 382.0
+offset_right = 566.0
+offset_bottom = 467.0
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 40
+text = "[S] tart
+[-/+] volume 50%"

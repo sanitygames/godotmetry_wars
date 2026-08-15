@@ -1,17 +1,24 @@
 [gd_scene format=3 uid="uid://vplod7nabyeo"]
 
 [ext_resource type="Script" uid="uid://cr6w1sj2oolfv" path="res://enemy_00.gd" id="1_4gyqm"]
-[ext_resource type="Texture2D" uid="uid://ft4bfv02m05a" path="res://icon.svg" id="1_7k104"]
+[ext_resource type="Shader" uid="uid://cnd0ocrdgg3yg" path="res://trigon.gdshader" id="2_qi2p4"]
+[ext_resource type="Texture2D" uid="uid://cf75p3e3ixoet" path="res://Sprite-0002.png" id="3_iifgy"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_4gyqm"]
-size = Vector2(126, 125)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_epg4t"]
+shader = ExtResource("2_qi2p4")
+shader_parameter/col = Color(1.891445, 1.0359969, 1.3781319, 1)
 
-[node name="Enemy" type="Area2D" unique_id=1061548829]
+[node name="Enemy00" type="Area2D" unique_id=1061548829]
+collision_layer = 4
+collision_mask = 3
 script = ExtResource("1_4gyqm")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=411689699]
-position = Vector2(0, -0.5)
-shape = SubResource("RectangleShape2D_4gyqm")
-
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=974817729]
-texture = ExtResource("1_7k104")
+material = SubResource("ShaderMaterial_epg4t")
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("3_iifgy")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=57642586]
+polygon = PackedVector2Array(-16, -9, 16, -9, 0, 18)
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

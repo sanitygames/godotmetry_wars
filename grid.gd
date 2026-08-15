@@ -2,9 +2,9 @@ extends Node2D
 
 const GRID_SIZE := Vector2i(48, 48)
 const GRID_SPACING := 20.0
-const SPRING_K := 210.0
-const NEIGHBOR_K := 2.3
-const DAMPING := 0.97
+const SPRING_K := 140.0
+const NEIGHBOR_K := 2.0
+const DAMPING := 0.90
 
 # var force_radius := 100.0
 # var force_strength := -2000.0
@@ -47,11 +47,13 @@ func _ready() -> void:
 func set_data(_bs: PackedByteArray, ps: PackedVector2Array, fs: PackedVector2Array) -> void:
 	forces.clear()
 	for i in _bs.size():
-		if _bs[i] == 1:
+		if _bs[i] == 1 && fs[i] != Vector2.ZERO:
 			forces.append([ps[i], fs[i].x, fs[i].y])
 
 
 func update(delta: float) -> void:
+	# print("SIZE: ", forces.size())
+
 	for _force in forces:
 		apply_force(_force[0] + Vector2(80, 80), delta, _force[1], _force[2])
 

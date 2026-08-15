@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://b0bi7821o0gk0"]
+
+[ext_resource type="Texture2D" uid="uid://cf75p3e3ixoet" path="res://Sprite-0002.png" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://cqtlc0qqka4rv" path="res://player.gd" id="1_onrkg"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_h2yge"]
+radius = 7.0
+
+[node name="Player" type="Area2D" unique_id=28638575]
+z_index = 1
+script = ExtResource("1_onrkg")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=228682006]
+self_modulate = Color(0, 1.2231846, 1.9040574, 1)
+rotation = 1.5707964
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("1_4flbx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1563114227]
+position = Vector2(-1, 0)
+shape = SubResource("CircleShape2D_h2yge")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1708269488]
+position_smoothing_enabled = true
