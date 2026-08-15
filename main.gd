@@ -11,16 +11,16 @@ const E3_ENTITY_SIZE := 5
 const E9_ENTITY_SIZE := 200
 const DEF_VEC2 := Vector2(9999, 9999)
 
-const PLAYER_FORCE := Vector2(100, 5000)
-const SHOT_FORCE := Vector2(50, 6000)
-const HIT_PARTICLE_FORCE := Vector2(50, -4000)
+const PLAYER_FORCE := Vector2(60, 100)
+const SHOT_FORCE := Vector2(40, 200)
+const HIT_PARTICLE_FORCE := Vector2(100, 30)
 # const E1_FORCE := Vector2(100, 1500)
 # const E2_FORCE := Vector2(100, 1500)
 const E1_FORCE := Vector2.ZERO
 const E2_FORCE := Vector2.ZERO
-const E3_FORCE := Vector2(300, 15000)
+const E3_FORCE := Vector2(300, 80)
 const E9_FORCE := Vector2.ZERO
-const DEATH_PARTICLE_FORCE := Vector2(200, -7000)
+const DEATH_PARTICLE_FORCE := Vector2(200, 100)
 
 @export var shot_inst: PackedScene
 @export var hit_particle_inst: PackedScene
@@ -426,7 +426,7 @@ func _on_player_area_entered(_area: Area2D) -> void:
 		game_over = true
 		player.visible = false
 		Sound.game_over()
-		forces[0] = Vector2(600, 100000)
+		forces[0] = Vector2(400, 1000)
 		GodotplayerScore.submit_score("main", score)
 		await get_tree().create_timer(0.05).timeout
 		forces[0] = Vector2.ZERO
