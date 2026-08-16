@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://cpkjy0ko0mj1a" path="res://entities/enemy_02.tscn" id="7_efxa6"]
 [ext_resource type="PackedScene" uid="uid://dw3od1jlwaw0a" path="res://entities/death_particle.tscn" id="8_5vw27"]
 [ext_resource type="FontFile" uid="uid://xfvo2y4qm6gf" path="res://font/x16y32pxGridGazer.ttf" id="11_efxa6"]
+[ext_resource type="Script" uid="uid://crbyyyq6hjqi8" path="res://main/cursor.gd" id="12_na0o7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dg77c"]
 shader = ExtResource("1_dg77c")
@@ -134,6 +135,10 @@ width = 4.0
 default_color = Color(0.1842713, 0.95665276, 0.17118013, 1)
 
 [node name="UILayer" type="CanvasLayer" parent="." unique_id=1140252179]
+
+[node name="Cursor" type="Node2D" parent="UILayer" unique_id=1802578630]
+visible = false
+script = ExtResource("12_na0o7")
 
 [node name="ScoreLabel" type="Label" parent="UILayer" unique_id=1640683739]
 self_modulate = Color(0.97, 0.97, 0.97, 1)

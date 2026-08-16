@@ -60,7 +60,6 @@ func set_data(_bs: PackedByteArray, ps: PackedVector2Array, fs: PackedVector2Arr
 
 
 func update(delta: float) -> void:
-	# var start = Time.get_ticks_usec()
 	for i in forces_size:
 		var lx = floor((force_ps[i].x - force_ds[i].x) / GRID_SPACING)
 		var rx = ceil((force_ps[i].x + force_ds[i].x) / GRID_SPACING)
@@ -75,9 +74,6 @@ func update(delta: float) -> void:
 					var fac = sin(PI * distance / force_ds[i].x)
 					var dir = force_ps[i].direction_to(positions[idx])
 					velocities[idx] += dir * fac * force_ds[i].y * delta
-
-	# var end = Time.get_ticks_usec()
-	# print(end - start)
 
 	update_physics(delta)
 	queue_redraw()

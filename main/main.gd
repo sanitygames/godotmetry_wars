@@ -33,6 +33,8 @@ const SCORE_TEXT := "HI-SCORE:%06d\n[%02d]SCORE:%06d\n"
 @onready var player: Player = $Player
 @onready var grid: Node2D = $Grid
 @onready var score_label: Label = $UILayer/ScoreLabel
+@onready var enemy_spawner: PathFollow2D = $E1Path/E1Spawner
+@onready var cursor: Node2D = $UILayer/Cursor
 
 var SHOT_IDX_ORIGIN := 1
 var E1_IDX_ORIGIN := 101
@@ -177,7 +179,7 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("retry"):
 		get_tree().reload_current_scene()
 	if Input.is_action_pressed("quit"):
-		get_tree().change_scene_to_file("res://title.tscn")
+		get_tree().change_scene_to_file("res://title/title.tscn")
 
 
 func _physics_process(delta: float) -> void:
@@ -206,7 +208,7 @@ func _physics_process(delta: float) -> void:
 	if e1_timer >= e1_interval:
 		var _idx = e1_idx + E1_IDX_ORIGIN
 		if flags[_idx] == 0:
-			var pos = get_spawn_position(timer)
+			var pos = get_spawn_position(randf())
 			entities[_idx].spawn(pos)
 			entities[_idx].accell = randf_range(0.8, min(1.0 + e1_death * 0.03, 2.0))
 			e1_timer = 0.0
@@ -219,7 +221,7 @@ func _physics_process(delta: float) -> void:
 	if e2_timer >= e2_interval:
 		var _idx = e2_idx + E2_IDX_ORIGIN
 		if flags[_idx] == 0:
-			var pos = get_spawn_position(timer)
+			var pos = get_spawn_position(randf())
 			entities[_idx].spawn(pos)
 			e2_timer = 0.0
 			flags[_idx] = 1
@@ -231,7 +233,7 @@ func _physics_process(delta: float) -> void:
 	if e3_timer >= e3_interval:
 		var _idx = e3_idx + E3_IDX_ORIGIN
 		if flags[_idx] == 0:
-			var pos = get_spawn_position(timer)
+			var pos = get_spawn_position(randf())
 			entities[_idx].spawn(pos)
 			e3_timer = 0.0
 			flags[_idx] = 1
@@ -282,6 +284,13 @@ func _physics_process(delta: float) -> void:
 	# Update Grid
 	grid.set_data(flags, positions, forces)
 	grid.update(delta)
+
+
+
+	cursor.queue_redraw()
+	if Input.is_action_just_pressed("click_left"):
+		cursor.visible = !cursor.visible
+
 
 
 ## 敵エンティティのスポーンとコレクションへの追加
@@ -362,7 +371,7 @@ func spawn_death_particle(pos: Vector2) -> void:
 
 ## 敵のスポーン位置の取得
 func get_spawn_position(_t: float) -> Vector2:
-	$E1Path/E1Spawner.progress_ratio = randf()
+	enemy_spawner.progress_ratio = _t
 	return $E1Path/E1Spawner.position
 
 
