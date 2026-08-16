@@ -13,7 +13,7 @@ config_version=5
 config/name="geometry"
 run/main_scene="uid://bgh4bmcxaqoig"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://img/icon.svg"
 
 [autoload]
 
@@ -31,6 +31,20 @@ window/dpi/allow_hidpi=false
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godotplayer_score/plugin.cfg")
+
+[file_customization]
+
+folder_colors={
+"res://addons/": "gray",
+"res://entities/": "green",
+"res://font/": "yellow",
+"res://global/": "purple",
+"res://img/": "yellow",
+"res://main/": "orange",
+"res://ogg/": "yellow",
+"res://title/": "orange",
+"res://web/": "gray"
+}
 
 [input]
 

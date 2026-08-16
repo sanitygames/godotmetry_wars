@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://xfvo2y4qm6gf"
-path="res://.godot/imported/x16y32pxGridGazer.ttf-8ad549aeecc743a3cac314226498f99b.fontdata"
+path="res://.godot/imported/x16y32pxGridGazer.ttf-43a2d4afa5de345dea536137f4e718fc.fontdata"
 
 [deps]
 
-source_file="res://x16y32pxGridGazer.ttf"
-dest_files=["res://.godot/imported/x16y32pxGridGazer.ttf-8ad549aeecc743a3cac314226498f99b.fontdata"]
+source_file="res://font/x16y32pxGridGazer.ttf"
+dest_files=["res://.godot/imported/x16y32pxGridGazer.ttf-43a2d4afa5de345dea536137f4e718fc.fontdata"]
 
 [params]
 

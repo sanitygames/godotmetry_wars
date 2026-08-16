@@ -1,0 +1,218 @@
+[gd_scene format=3 uid="uid://bgh4bmcxaqoig"]
+
+[ext_resource type="Script" uid="uid://3oosj740p54n" path="res://title/title.gd" id="1_oyqm6"]
+[ext_resource type="FontFile" uid="uid://xfvo2y4qm6gf" path="res://font/x16y32pxGridGazer.ttf" id="1_y7k74"]
+[ext_resource type="Script" uid="uid://cqtlc0qqka4rv" path="res://entities/player.gd" id="3_grl6k"]
+[ext_resource type="Texture2D" uid="uid://cf75p3e3ixoet" path="res://img/Sprite-0002.png" id="4_cvhyk"]
+[ext_resource type="PackedScene" uid="uid://vplod7nabyeo" path="res://entities/enemy.tscn" id="5_grl6k"]
+[ext_resource type="PackedScene" uid="uid://cpkjy0ko0mj1a" path="res://entities/enemy_02.tscn" id="6_cvhyk"]
+[ext_resource type="PackedScene" uid="uid://cxjvdpf750i8p" path="res://entities/enemy_01.tscn" id="7_vxeqy"]
+[ext_resource type="PackedScene" uid="uid://cm2ghcjs83e2h" path="res://entities/enemy_99.tscn" id="8_3l5ow"]
+
+[sub_resource type="Environment" id="Environment_y7k74"]
+background_mode = 3
+background_canvas_max_layer = 1
+glow_enabled = true
+glow_intensity = 3.32
+glow_strength = 1.27
+glow_bloom = 0.28
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_h2yge"]
+radius = 7.0
+
+[node name="Title" type="Control" unique_id=1516422767]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_oyqm6")
+metadata/_edit_vertical_guides_ = [800.0, 400.0]
+metadata/_edit_horizontal_guides_ = [600.0, 500.0, 300.0, 100.0]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=607433175]
+environment = SubResource("Environment_y7k74")
+
+[node name="Title" type="Label" parent="." unique_id=18071775]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 68.0
+offset_right = 802.0
+offset_bottom = 137.0
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 68
+text = "GODOTMETRY WARS"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=563630903]
+layout_mode = 0
+offset_left = 67.0
+offset_top = 223.0
+offset_right = 775.0
+offset_bottom = 383.0
+theme_override_constants/separation = 27
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=2040126434]
+custom_minimum_size = Vector2(120, 160)
+layout_mode = 2
+
+[node name="PlayerLabel" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=937085817]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 24
+text = "Player"
+horizontal_alignment = 1
+
+[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer" unique_id=582178835]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Player" type="Area2D" parent="HBoxContainer/VBoxContainer/Control" unique_id=28638575]
+z_index = 1
+position = Vector2(60, 48)
+rotation = -1.5707964
+scale = Vector2(3.64, 3.64)
+script = ExtResource("3_grl6k")
+
+[node name="Sprite2D" type="Sprite2D" parent="HBoxContainer/VBoxContainer/Control/Player" unique_id=228682006]
+self_modulate = Color(0, 1.3017389, 2.524026, 1)
+rotation = 1.5707964
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("4_cvhyk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HBoxContainer/VBoxContainer/Control/Player" unique_id=1563114227]
+position = Vector2(-1, 0)
+shape = SubResource("CircleShape2D_h2yge")
+
+[node name="PlayerLabel2" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=1700143902]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 16
+text = "[WASD]   Move
+[mouse]  Rotate"
+horizontal_alignment = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer" unique_id=1399614192]
+custom_minimum_size = Vector2(120, 160)
+layout_mode = 2
+
+[node name="PlayerLabel" type="Label" parent="HBoxContainer/VBoxContainer2" unique_id=346641594]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 24
+text = "Enemy-A"
+horizontal_alignment = 1
+
+[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer2" unique_id=1578026970]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Enemy99" parent="HBoxContainer/VBoxContainer2/Control" unique_id=2006360758 instance=ExtResource("8_3l5ow")]
+position = Vector2(60, 48)
+scale = Vector2(1.98, 1.98)
+
+[node name="PlayerLabel2" type="Label" parent="HBoxContainer/VBoxContainer2" unique_id=91359459]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 16
+text = "10pt"
+horizontal_alignment = 1
+
+[node name="VBoxContainer6" type="VBoxContainer" parent="HBoxContainer" unique_id=1368327962]
+custom_minimum_size = Vector2(120, 160)
+layout_mode = 2
+
+[node name="PlayerLabel" type="Label" parent="HBoxContainer/VBoxContainer6" unique_id=783506402]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 24
+text = "Enemy-B"
+horizontal_alignment = 1
+
+[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer6" unique_id=1760331433]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Enemy00" parent="HBoxContainer/VBoxContainer6/Control" unique_id=1061548829 instance=ExtResource("5_grl6k")]
+position = Vector2(60, 42.28)
+scale = Vector2(1.42, 1.42)
+
+[node name="PlayerLabel2" type="Label" parent="HBoxContainer/VBoxContainer6" unique_id=1291123898]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 16
+text = "100pt"
+horizontal_alignment = 1
+
+[node name="VBoxContainer7" type="VBoxContainer" parent="HBoxContainer" unique_id=1977398121]
+custom_minimum_size = Vector2(120, 160)
+layout_mode = 2
+
+[node name="PlayerLabel" type="Label" parent="HBoxContainer/VBoxContainer7" unique_id=1596027565]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 24
+text = "Enemy-C"
+horizontal_alignment = 1
+
+[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer7" unique_id=1577677189]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Enemy01" parent="HBoxContainer/VBoxContainer7/Control" unique_id=531207494 instance=ExtResource("7_vxeqy")]
+position = Vector2(60, 47.62)
+scale = Vector2(0.78, 0.78)
+
+[node name="PlayerLabel2" type="Label" parent="HBoxContainer/VBoxContainer7" unique_id=1627189690]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 16
+text = "1000pt"
+horizontal_alignment = 1
+
+[node name="VBoxContainer8" type="VBoxContainer" parent="HBoxContainer" unique_id=1414161541]
+custom_minimum_size = Vector2(120, 160)
+layout_mode = 2
+
+[node name="PlayerLabel" type="Label" parent="HBoxContainer/VBoxContainer8" unique_id=1412229249]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 24
+text = "Enemy-D"
+horizontal_alignment = 1
+
+[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer8" unique_id=569678636]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Enemy02" parent="HBoxContainer/VBoxContainer8/Control" unique_id=629523478 instance=ExtResource("6_cvhyk")]
+position = Vector2(60, 47.68)
+scale = Vector2(0.59, 0.59)
+
+[node name="PlayerLabel2" type="Label" parent="HBoxContainer/VBoxContainer8" unique_id=332472597]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 16
+text = "10000pt"
+horizontal_alignment = 1
+
+[node name="Menu" type="Label" parent="." unique_id=1181981779]
+layout_mode = 0
+offset_top = 470.0
+offset_right = 800.0
+offset_bottom = 530.0
+theme_override_fonts/font = ExtResource("1_y7k74")
+theme_override_font_sizes/font_size = 40
+text = "[S] tart       [-/+] volume: 50%"
+horizontal_alignment = 1
+vertical_alignment = 1

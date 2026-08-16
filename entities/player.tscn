@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://b0bi7821o0gk0"]
 
-[ext_resource type="Texture2D" uid="uid://cf75p3e3ixoet" path="res://Sprite-0002.png" id="1_4flbx"]
-[ext_resource type="Script" uid="uid://cqtlc0qqka4rv" path="res://player.gd" id="1_onrkg"]
-[ext_resource type="Shader" uid="uid://c6tmb4xpbbj82" path="res://chromatic_aberration.gdshader" id="3_i3pqv"]
+[ext_resource type="Texture2D" uid="uid://cf75p3e3ixoet" path="res://img/Sprite-0002.png" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://cqtlc0qqka4rv" path="res://entities/player.gd" id="1_onrkg"]
+[ext_resource type="Shader" uid="uid://c6tmb4xpbbj82" path="res://title/chromatic_aberration.gdshader" id="3_i3pqv"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_h2yge"]
 radius = 7.0

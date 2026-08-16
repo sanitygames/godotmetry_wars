@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cukbc7fxccv3b"]
 
-[ext_resource type="Script" uid="uid://d1vrmt065t1h" path="res://sound.gd" id="1_3j8lq"]
-[ext_resource type="FontFile" uid="uid://xfvo2y4qm6gf" path="res://x16y32pxGridGazer.ttf" id="2_7ywqe"]
+[ext_resource type="Script" uid="uid://d1vrmt065t1h" path="res://global/sound.gd" id="1_3j8lq"]
+[ext_resource type="FontFile" uid="uid://xfvo2y4qm6gf" path="res://font/x16y32pxGridGazer.ttf" id="2_7ywqe"]
 [ext_resource type="AudioStream" uid="uid://db6evgomrjn5q" path="res://ogg/2.ogg" id="3_kycvu"]
 [ext_resource type="AudioStream" uid="uid://d2hp4ktbvj3g7" path="res://ogg/5.ogg" id="4_glhti"]
 [ext_resource type="AudioStream" uid="uid://ct8u14mevd0d8" path="res://ogg/4.ogg" id="5_v1rld"]
