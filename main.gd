@@ -11,16 +11,16 @@ const E3_ENTITY_SIZE := 5
 const E9_ENTITY_SIZE := 200
 const DEF_VEC2 := Vector2(9999, 9999)
 
-const PLAYER_FORCE := Vector2(60, 100)
-const SHOT_FORCE := Vector2(40, 200)
-const HIT_PARTICLE_FORCE := Vector2(100, 30)
+const PLAYER_FORCE := Vector2(40, 10000)
+const SHOT_FORCE := Vector2(20, 10000)
+const HIT_PARTICLE_FORCE := Vector2(100, 3000)
 # const E1_FORCE := Vector2(100, 1500)
 # const E2_FORCE := Vector2(100, 1500)
 const E1_FORCE := Vector2.ZERO
 const E2_FORCE := Vector2.ZERO
-const E3_FORCE := Vector2(300, 600)
+const E3_FORCE := Vector2(200, 56000)
 const E9_FORCE := Vector2.ZERO
-const DEATH_PARTICLE_FORCE := Vector2(200, 300)
+const DEATH_PARTICLE_FORCE := Vector2(150, 28600)
 
 @export var shot_inst: PackedScene
 @export var hit_particle_inst: PackedScene
@@ -70,8 +70,8 @@ var game_over := false
 
 
 func _ready() -> void:
-	for i in range(-100, 100):
-		print(exp(i * 0.0001))
+	Score.get_ranking()
+	print(Score.ranking)
 	Sound.is_title = false
 	set_process(false)
 	entities.append(player)
@@ -272,7 +272,7 @@ func _physics_process(delta: float) -> void:
 		forces[i].y *= 0.9
 
 	Score.hi_score = max(Score.hi_score, score)
-	var rank = Score.ranking.size() - Score.ranking.bsearch(score) + 1
+	var rank = Score.get_rank(score)
 	score_label.text = "HI-SCORE:%06d\n[%02d]SCORE:%06d" % [Score.hi_score, rank, score]
 
 	grid.set_data(flags, positions, forces)
@@ -428,7 +428,14 @@ func _on_player_area_entered(_area: Area2D) -> void:
 		game_over = true
 		player.visible = false
 		Sound.game_over()
-		forces[0] = Vector2(400, 1000)
+		var tween := create_tween()
+		(
+			tween
+			. tween_method(func(v): forces[0] = v, Vector2(170, -300000), Vector2(1300, 100), 1.0)
+			. set_ease(tween.EASE_OUT)
+			. set_trans(Tween.TRANS_CUBIC)
+		)
+		# forces[0] = Vector2(400, 1000)
 		GodotplayerScore.submit_score("main", score)
 		await get_tree().create_timer(0.05).timeout
 		forces[0] = Vector2.ZERO

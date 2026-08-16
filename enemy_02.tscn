@@ -11,6 +11,9 @@ collision_layer = 4
 collision_mask = 3
 script = ExtResource("1_bjrl7")
 
+[node name="ForcePoint" type="Node2D" parent="." unique_id=189744256]
+position = Vector2(0, -66)
+
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1576073072]
 scale = Vector2(0.75, 0.75)
 texture = ExtResource("2_8mdog")

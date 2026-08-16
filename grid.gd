@@ -4,7 +4,7 @@ const GRID_SIZE := Vector2i(48, 36)
 const GRID_SPACING := 20.0
 # const GRID_SIZE := Vector2i(96, 72)
 # const GRID_SPACING := 10.0
-const SPRING_K := 320.0
+const SPRING_K := 300.0
 const NEIGHBOR_K := 0.8
 const DAMPING := 0.90
 
@@ -74,7 +74,7 @@ func update(delta: float) -> void:
 				if distance < force_ds[i].x:
 					var fac = sin(PI * distance / force_ds[i].x)
 					var dir = force_ps[i].direction_to(positions[idx])
-					velocities[idx] += dir * fac * force_ds[i].y * delta * 100.0
+					velocities[idx] += dir * fac * force_ds[i].y * delta
 
 	# var end = Time.get_ticks_usec()
 	# print(end - start)
