@@ -2,9 +2,9 @@ extends Entity
 
 const SPEED := 30.0
 const MAX_LIFE := 16
-signal e2_hit_shot(shot: Area2D)
-signal e2_death(id: int)
-signal e2_shot(id: int)
+# signal e2_hit_shot(shot: Area2D)
+# signal e2_death(id: int)
+# signal e2_shot(id: int)
 
 var target := Vector2.INF
 
@@ -30,15 +30,15 @@ func move(delta: float, _d: Dictionary = {}) -> Vector2:
 	if time >= 0.4:
 		time = 0.0
 		if 0 < position.x && position.x < 800 && 0 < position.y && position.y < 600:
-			e2_shot.emit(id)
+			shoot.emit(id)
 
 	return position
 
 
 func _on_area_entered(shot: Entity) -> void:
-	e2_hit_shot.emit(shot)
+	hit.emit(shot)
 	life -= 1
 	if life <= 0:
-		e2_death.emit(id)
+		dead.emit(id)
 		target = Vector2.INF
 		death()

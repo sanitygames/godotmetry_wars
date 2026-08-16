@@ -2,8 +2,8 @@ extends Entity
 
 const SPEED := 600.0
 const MAX_LIFE := 1
-signal e9_hit_shot(area: Area2D)
-signal e9_death(id: int)
+# signal e9_hit_shot(area: Area2D)
+# signal e9_death(id: int)
 
 var dir := Vector2.INF
 var speed := SPEED
@@ -28,10 +28,10 @@ func move(delta: float, _d: Dictionary = {}) -> Vector2:
 
 
 func _on_area_entered(area: Entity) -> void:
-	e9_hit_shot.emit(area)
+	hit.emit(area)
 	life -= 1
 	if life <= 0:
-		e9_death.emit(id)
+		dead.emit(id)
 		speed = SPEED
 		dir = Vector2.INF
 		death()

@@ -5,8 +5,8 @@ const SHOT_INTERVAL := 0.08
 const SHOT_ENTITY_SIZE := 100
 const HIT_PARTICLE_ENTITY_SIZE := 100
 const DEATH_PARTICLE_ENTITY_SIZE := 20
-const E1_ENTITY_SIZE := 20
-const E2_ENTITY_SIZE := 20
+const E1_ENTITY_SIZE := 30
+const E2_ENTITY_SIZE := 10
 const E3_ENTITY_SIZE := 5
 const E9_ENTITY_SIZE := 200
 const DEF_VEC2 := Vector2(9999, 9999)
@@ -28,7 +28,7 @@ const DEATH_PARTICLE_FORCE := Vector2(150, 28600)
 @export var e3_inst: PackedScene
 @export var e9_inst: PackedScene
 
-@onready var player: Entity = $Player
+@onready var player: Player = $Player
 @onready var grid: Node2D = $Grid
 @onready var score_label: Label = $UILayer/ScoreLabel
 
@@ -74,11 +74,14 @@ func _ready() -> void:
 	Sound.is_title = false
 	set_process(false)
 
+	# Add Player
 	entities.append(player)
 	flags.append(1)
 	positions.append(player.position)
 	forces.append(PLAYER_FORCE)
 
+	# Add PlayerShot
+	SHOT_ENTITY_IDX_ORIGIN = entities.size()
 	for i in SHOT_ENTITY_SIZE:
 		var _s: Entity = shot_inst.instantiate()
 		_s.position = DEF_VEC2
@@ -89,91 +92,77 @@ func _ready() -> void:
 		positions.append(DEF_VEC2)
 		forces.append(SHOT_FORCE if i % 3 == 0 else Vector2.ZERO)
 
+	# Add EnemyB (Trigon)
 	E1_IDX_ORIGIN = entities.size()
-	for i in E1_ENTITY_SIZE:
-		var _e1: Entity = e1_inst.instantiate()
-		_e1.initialize(E1_IDX_ORIGIN + i)
-		# _e1.position = DEF_VEC2
-		# _e1.id = E1_IDX_ORIGIN + i
-		# _e1.monitoring = false
-		_e1.e1_hit_shot.connect(_on_e1_hit_shot)
-		_e1.e1_death.connect(_on_e1_death)
-		add_child(_e1)
-		entities.append(_e1)
-		flags.append(0)
-		positions.append(DEF_VEC2)
-		forces.append(E1_FORCE)
+	__add_enemy(
+		E1_IDX_ORIGIN,
+		E1_ENTITY_SIZE,
+		e1_inst,
+		E1_FORCE,
+		func(_e: Entity):
+		_e.hit.connect(_on_e1_hit)
+		_e.dead.connect(_on_e1_death)
+	)
 
+	# Add EnemyC (Square)
 	E2_IDX_ORIGIN = entities.size()
-	for i in E2_ENTITY_SIZE:
-		var _e2: Entity = e2_inst.instantiate()
-		_e2.initialize(E2_IDX_ORIGIN + i)
-		# _e2.position = DEF_VEC2
-		# _e2.id = E2_IDX_ORIGIN + i
-		# _e2.monitoring = false
-		_e2.e2_hit_shot.connect(_on_e2_hit_shot)
-		_e2.e2_death.connect(_on_e2_death)
-		_e2.e2_shot.connect(_on_e2_shot)
-		add_child(_e2)
-		entities.append(_e2)
-		flags.append(0)
-		positions.append(DEF_VEC2)
-		forces.append(E2_FORCE)
-
-	E3_IDX_ORIGIN = entities.size()
-	for i in E3_ENTITY_SIZE:
-		var _e3: Entity = e3_inst.instantiate()
-		_e3.initialize(E3_IDX_ORIGIN + i)
-		# _e3.position = DEF_VEC2
-		# _e3.id = E3_IDX_ORIGIN + i
-		# _e3.monitoring = false
-		_e3.e3_hit_shot.connect(_on_e3_hit_shot)
-		_e3.e3_death.connect(_on_e3_death)
-		_e3.e3_shot.connect(_on_e3_shot)
-		add_child(_e3)
-		entities.append(_e3)
-		flags.append(0)
-		positions.append(DEF_VEC2)
-		forces.append(E3_FORCE)
-
-	E9_IDX_ORIGIN = entities.size()
-	for i in E9_ENTITY_SIZE:
-		var _e9: Entity = e9_inst.instantiate()
-		_e9.initialize(E9_IDX_ORIGIN + i)
-		# _e9.position = DEF_VEC2
-		# _e9.id = E9_IDX_ORIGIN + i
-		# _e9.monitoring = false
-		_e9.e9_hit_shot.connect(_on_e9_hit_shot)
-		_e9.e9_death.connect(_on_e9_death)
-		add_child(_e9)
-		entities.append(_e9)
-		flags.append(0)
-		positions.append(DEF_VEC2)
-		forces.append(E9_FORCE)
-
-	HIT_PARTICLE_ENTITY_IDX_ORIGIN = entities.size()
-	for i in HIT_PARTICLE_ENTITY_SIZE:
-		var _p: GPUParticles2D = hit_particle_inst.instantiate()
-		_p.position = DEF_VEC2
-		_p.finished.connect(_on_hit_particle_emit_finished.bind(HIT_PARTICLE_ENTITY_IDX_ORIGIN + i))
-		add_child(_p)
-		particles.append(_p)
-		flags.append(0)
-		positions.append(DEF_VEC2)
-		forces.append(HIT_PARTICLE_FORCE)
-
-	DEATH_PARTICLE_ENTITY_IDX_ORIGIN = entities.size() + HIT_PARTICLE_ENTITY_SIZE
-	for i in DEATH_PARTICLE_ENTITY_SIZE:
-		var _dp: GPUParticles2D = death_particle_inst.instantiate()
-		_dp.position = DEF_VEC2
-		_dp.finished.connect(
-			_on_death_particle_emit_finished.bind(DEATH_PARTICLE_ENTITY_IDX_ORIGIN + i)
+	__add_enemy(
+		E2_IDX_ORIGIN,
+		E2_ENTITY_SIZE,
+		e2_inst,
+		E2_FORCE,
+		func(_e: Entity):
+		_e.hit.connect(_on_e2_hit)
+		_e.dead.connect(_on_e2_death)
+		_e.shoot.connect(_on_e2_shot)
 		)
-		add_child(_dp)
-		particles.append(_dp)
-		flags.append(0)
-		positions.append(DEF_VEC2)
-		forces.append(DEATH_PARTICLE_FORCE)
+
+	# Add EnemyD (Gobot)
+	E3_IDX_ORIGIN = entities.size()
+	__add_enemy(
+		E3_IDX_ORIGIN,
+		E3_ENTITY_SIZE,
+		e3_inst,
+		E3_FORCE,
+		func(_e: Entity):
+		_e.hit.connect(_on_e3_hit)
+		_e.dead.connect(_on_e3_death)
+		_e.shoot.connect(_on_e3_shot)
+		)
+
+	# Add EnemyA (RedBullet)
+	E9_IDX_ORIGIN = entities.size()
+	__add_enemy(
+		E9_IDX_ORIGIN,
+		E9_ENTITY_SIZE,
+		e9_inst,
+		E9_FORCE,
+		func(_e: Entity):
+		_e.hit.connect(_on_e9_hit)
+		_e.dead.connect(_on_e9_death)
+		)
+
+	# Add Particle (Small)
+	HIT_PARTICLE_ENTITY_IDX_ORIGIN = entities.size()
+	__add_particle(
+		HIT_PARTICLE_ENTITY_IDX_ORIGIN,
+		HIT_PARTICLE_ENTITY_SIZE,
+		hit_particle_inst,
+		HIT_PARTICLE_FORCE,
+		_on_hit_particle_emit_finished
+
+		)
+
+	# Add Particle (Big)
+	DEATH_PARTICLE_ENTITY_IDX_ORIGIN = entities.size() + HIT_PARTICLE_ENTITY_SIZE
+	__add_particle(
+		DEATH_PARTICLE_ENTITY_IDX_ORIGIN,
+		DEATH_PARTICLE_ENTITY_SIZE,
+		death_particle_inst,
+		DEATH_PARTICLE_FORCE,
+		_on_death_particle_emit_finished
+		)
+
 
 
 func _process(delta: float) -> void:
@@ -188,86 +177,93 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	# Update MainTime
 	timer += delta
-	var player_position = DEF_VEC2
 
+	# Move Player
 	if !game_over:
-		player_position = player.move(delta)
-		positions[0] = player_position
-		if player.is_move:
-			forces[0] = PLAYER_FORCE
-		else:
-			forces[0] = Vector2.ZERO
+		positions[0] = player.move(delta)
+		forces[0] = PLAYER_FORCE if player.is_move else Vector2.ZERO
 
+	# Spawn PlayerShot (指定時間による活性化)
+	# (対象がアクティブの時にはこのフレームをスルー)
 	shot_timer += delta
 	if shot_timer >= SHOT_INTERVAL:
 		var _idx = shot_idx + SHOT_ENTITY_IDX_ORIGIN
 		if flags[_idx] == 0:
+			entities[_idx].spawn(player.position, player.rotation)
 			shot_timer = 0.0
 			flags[_idx] = 1
-			entities[_idx].rotation = player.rotation
-			entities[_idx].position = player_position
 		shot_idx = (shot_idx + 1) % SHOT_ENTITY_SIZE
 
+	# Spawn Enemy-B(Trigon) (指定時間による活性化)
+	# (対象がアクティブの時にはこのフレームをスルー)
+	e1_timer += delta
+	if e1_timer >= e1_interval:
+		var _idx = e1_idx + E1_IDX_ORIGIN
+		if flags[_idx] == 0:
+			var pos = get_spawn_position(timer)
+			entities[_idx].spawn(pos)
+			entities[_idx].accell = randf_range(0.8, min(1.0 + e1_death * 0.03, 2.0))
+			e1_timer = 0.0
+			flags[_idx] = 1
+		e1_idx = (e1_idx + 1) % E1_ENTITY_SIZE
+
+	# Spawn Enemy-C(Square) (指定時間による活性化)
+	# (対象がアクティブの時にはこのフレームをスルー)
+	e2_timer += delta
+	if e2_timer >= e2_interval:
+		var _idx = e2_idx + E2_IDX_ORIGIN
+		if flags[_idx] == 0:
+			var pos = get_spawn_position(timer)
+			entities[_idx].spawn(pos)
+			e2_timer = 0.0
+			flags[_idx] = 1
+		e2_idx = (e2_idx + 1) % E2_ENTITY_SIZE
+
+	# Spawn Enemy-D(Gobot) (指定時間による活性化)
+	# (対象がアクティブの時にはこのフレームをスルー)
+	e3_timer += delta
+	if e3_timer >= e3_interval:
+		var _idx = e3_idx + E3_IDX_ORIGIN
+		if flags[_idx] == 0:
+			var pos = get_spawn_position(timer)
+			entities[_idx].spawn(pos)
+			e3_timer = 0.0
+			flags[_idx] = 1
+		e3_idx = (e3_idx + 1) % E3_ENTITY_SIZE
+
+	# Move PlayerShots
 	for i in range(SHOT_ENTITY_IDX_ORIGIN, SHOT_ENTITY_IDX_ORIGIN + SHOT_ENTITY_SIZE):
 		if flags[i] == 1:
 			var pos = entities[i].move(delta)
 			positions[i] = pos
 
-	e1_timer += delta
-	if e1_timer >= e1_interval:
-		var _idx = e1_idx + E1_IDX_ORIGIN
-		if flags[_idx] == 0:
-			e1_timer = 0.0
-			flags[_idx] = 1
-			var pos = get_e1_position(timer)
-			entities[_idx].spawn(pos)
-			positions[_idx] = pos
-			entities[_idx].accell = randf_range(0.8, min(1.0 + e1_death * 0.03, 2.0))
-		e1_idx = (e1_idx + 1) % E1_ENTITY_SIZE
-
-	e2_timer += delta
-	if e2_timer >= e2_interval:
-		var _idx = e2_idx + E2_IDX_ORIGIN
-		if flags[_idx] == 0:
-			e2_timer = 0.0
-			flags[_idx] = 1
-			var pos = get_e1_position(timer)
-			entities[_idx].spawn(pos)
-			positions[_idx] = pos
-		e2_idx = (e2_idx + 1) % E2_ENTITY_SIZE
-
-	e3_timer += delta
-	if e3_timer >= e3_interval:
-		var _idx = e3_idx + E3_IDX_ORIGIN
-		if flags[_idx] == 0:
-			e3_timer = 0.0
-			flags[_idx] = 1
-			var pos = get_e1_position(timer)
-			entities[_idx].spawn(pos)
-			positions[_idx] = pos
-		e3_idx = (e3_idx + 1) % E3_ENTITY_SIZE
-
+	# Move Enemy-A(Trigon)
 	for i in range(E1_IDX_ORIGIN, E1_IDX_ORIGIN + E1_ENTITY_SIZE):
 		if flags[i] == 1:
-			var pos = entities[i].move(delta, {"pp": player_position})
+			var pos = entities[i].move(delta, {"pp": player.position})
 			positions[i] = pos
 
+	# Move Enemy-B(Square)
 	for i in range(E2_IDX_ORIGIN, E2_IDX_ORIGIN + E2_ENTITY_SIZE):
 		if flags[i] == 1:
 			var pos = entities[i].move(delta)
 			positions[i] = pos
 
+	# Move Enemy-C(Gobot)
 	for i in range(E3_IDX_ORIGIN, E3_IDX_ORIGIN + E3_ENTITY_SIZE):
 		if flags[i] == 1:
 			var pos = entities[i].move(delta)
 			positions[i] = pos
 
+	# Move Enemy-D(Bullet)
 	for i in range(E9_IDX_ORIGIN, E9_IDX_ORIGIN + E9_ENTITY_SIZE):
 		if flags[i] == 1:
-			var pos = entities[i].move(delta, {"pp": player_position})
+			var pos = entities[i].move(delta, {"pp": player.position})
 			positions[i] = pos
 
+	# ChangeScale DeathParticle
 	for i in range(
 		DEATH_PARTICLE_ENTITY_IDX_ORIGIN,
 		DEATH_PARTICLE_ENTITY_IDX_ORIGIN + DEATH_PARTICLE_ENTITY_SIZE
@@ -275,14 +271,62 @@ func _physics_process(delta: float) -> void:
 		forces[i].x *= 1.05
 		forces[i].y *= 0.9
 
+	# TODO: 後で修正
+	# Update ScoreUI
 	Score.hi_score = max(Score.hi_score, score)
 	var rank = Score.get_rank(score)
 	score_label.text = "HI-SCORE:%06d\n[%02d]SCORE:%06d" % [Score.hi_score, rank, score]
 
+	# Update Grid
 	grid.set_data(flags, positions, forces)
 	grid.update(delta)
 
+## 敵エンティティのスポーンとコレクションへの追加
+func __add_enemy(
+	origin: int, size: int, scene: PackedScene, force: Vector2, connector: Callable
+) -> void:
+	for i in size:
+		var _e: Entity = scene.instantiate()
+		_e.initialize(origin + i)
+		connector.call(_e)
+		add_child(_e)
+		entities.append(_e)
+		flags.append(0)
+		positions.append(DEF_VEC2)
+		forces.append(force)
 
+
+## パーティクルのスポーンとコレクションへの追加
+func __add_particle(origin: int, size: int, scene: PackedScene, force: Vector2, action: Callable) -> void:
+	for i in size:
+		var _e: GPUParticles2D = scene.instantiate()
+		_e.position = DEF_VEC2
+		_e.finished.connect(action.bind(origin + i))
+		add_child(_e)
+		particles.append(_e)
+		flags.append(0)
+		positions.append(DEF_VEC2)
+		forces.append(force)
+		
+
+## Enemy-A(Bullet)をアクティブにする
+## (任意のタイミング)
+func __spawn_e9(pos: Vector2, t: int = 0) -> void:
+	for i in E9_ENTITY_SIZE:
+		var idx = e9_idx + E9_IDX_ORIGIN
+		if flags[idx] == 0:
+			flags[idx] = 1
+			entities[idx].spawn(pos)
+			positions[idx] = pos
+			if t != 0:
+				entities[idx].dir = Vector2(cos(timer), sin(sin(timer)))
+			e9_idx = (e9_idx + 1) % E9_ENTITY_SIZE
+			return
+		e9_idx = (e9_idx + 1) % E9_ENTITY_SIZE
+
+
+## HitParticleをアクティブにする
+## (任意のタイミング)
 func spawn_hit_particle(pos: Vector2) -> void:
 	for i in HIT_PARTICLE_ENTITY_SIZE:
 		var idx = hit_idx + HIT_PARTICLE_ENTITY_IDX_ORIGIN
@@ -292,11 +336,13 @@ func spawn_hit_particle(pos: Vector2) -> void:
 			particles[hit_idx].emitting = true
 			positions[idx] = pos
 			hit_idx = (hit_idx + 1) % HIT_PARTICLE_ENTITY_SIZE
-			Sound.shot()
+			# Sound.shot()
 			return
 		hit_idx = (hit_idx + 1) % HIT_PARTICLE_ENTITY_SIZE
 
 
+## DeathParticleをアクティブにする
+## (任意のタイミング)
 func spawn_death_particle(pos: Vector2) -> void:
 	for i in DEATH_PARTICLE_ENTITY_SIZE:
 		var idx = death_idx + DEATH_PARTICLE_ENTITY_IDX_ORIGIN
@@ -311,25 +357,13 @@ func spawn_death_particle(pos: Vector2) -> void:
 		death_idx = (death_idx + 1) % DEATH_PARTICLE_ENTITY_SIZE
 
 
-func spawn_e9(pos: Vector2, t: int = 0) -> void:
-	for i in E9_ENTITY_SIZE:
-		var idx = e9_idx + E9_IDX_ORIGIN
-		if flags[idx] == 0:
-			flags[idx] = 1
-			entities[idx].spawn(pos)
-			positions[idx] = pos
-			if t != 0:
-				entities[idx].dir = Vector2(cos(timer), sin(sin(timer)))
-			e9_idx = (e9_idx + 1) % E9_ENTITY_SIZE
-			return
-		e9_idx = (e9_idx + 1) % E9_ENTITY_SIZE
-
-
-func get_e1_position(_t: float) -> Vector2:
+## 敵のスポーン位置の取得
+func get_spawn_position(_t: float) -> Vector2:
 	$E1Path/E1Spawner.progress_ratio = randf()
 	return $E1Path/E1Spawner.position
 
 
+## 壁との衝突(PlayerShot, EnemyShot(Bullet))
 func _on_wall_area_entered(entity: Entity) -> void:
 	var id = entity.id
 	var pos = entity.position
@@ -338,96 +372,103 @@ func _on_wall_area_entered(entity: Entity) -> void:
 	flags[id] = 0
 	entities[id].position = DEF_VEC2
 	entities[id].dir = Vector2.INF
+	if entity is Bullet:
+		Sound.shot()
 
 
+## Particle終了時アクションのヘルパー
+func __particle_finish(id: int) -> void:
+	flags[id] = 0
+	positions[id] = DEF_VEC2
+
+
+## HitParticleエミット終了時のアクション
 func _on_hit_particle_emit_finished(id: int) -> void:
-	# prints("HITFINISH", id, timer)
-	flags[id] = 0
-	positions[id] = DEF_VEC2
+	__particle_finish(id)
 
 
+# DeathParticleエミット終了時のアクション
 func _on_death_particle_emit_finished(id: int) -> void:
-	flags[id] = 0
-	positions[id] = DEF_VEC2
+	__particle_finish(id)
 
 
-func _on_e1_hit_shot(shot: Entity) -> void:
+## Enemy-B(Trigon) とPlayerShotの衝突時アクション
+func _on_e1_hit(shot: Entity) -> void:
+	__hit(shot, 1.0)
+
+
+## Enemy-C(Square) とPlayerShotの衝突時アクション
+func _on_e2_hit(shot: Entity) -> void:
+	__hit(shot, 0.75)
+
+
+## Enemy-D(Gobot) とPlayerShotの衝突時アクション
+func _on_e3_hit(shot: Entity) -> void:
+	__hit(shot, 0.5)
+
+
+## Enemy-A(Bullet) とPlayerShotの衝突時アクション
+func _on_e9_hit(shot: Entity) -> void:
+	__hit(shot, 1.2)
+
+
+## Enemy<->PlayerShotの衝突処理ヘルパー
+func __hit(shot: Entity, pitch: float) -> void:
 	spawn_hit_particle(shot.position)
 	shot.death()
-	entities[shot.id].position = DEF_VEC2
 	flags[shot.id] = 0
-	Sound.hit(1.0)
+	positions[shot.id] = DEF_VEC2
+	Sound.hit(pitch)
 
 
+## Enemy-B(Trigon)が倒された際のアクション
 func _on_e1_death(id: int) -> void:
 	spawn_death_particle(entities[id].position)
 	e1_interval -= 0.02
 	e1_death += 1
-	flags[id] = 0
-	entities[id].position = DEF_VEC2
-	score += 100
+	__death(id, 100)
 	Sound.bomb(1.0)
 
 
-func _on_e2_hit_shot(shot: Entity) -> void:
-	spawn_hit_particle(shot.position)
-	shot.death()
-	var id = shot.id
-	entities[id].position = DEF_VEC2
-	flags[id] = 0
-	Sound.hit(0.75)
-
-
+## Enemy-C(Square)が倒された際のアクション
 func _on_e2_death(id: int) -> void:
 	spawn_death_particle(entities[id].position)
 	e2_interval -= 0.10
-	flags[id] = 0
-	entities[id].position = DEF_VEC2
-	score += 1000
 	Sound.bomb(0.75)
+	__death(id, 1000)
 
 
-func _on_e2_shot(id: int) -> void:
-	spawn_e9(positions[id])
-
-
-func _on_e3_hit_shot(shot: Entity) -> void:
-	spawn_hit_particle(shot.position)
-	shot.death()
-	var id = shot.id
-	entities[id].position = DEF_VEC2
-	flags[id] = 0
-	Sound.hit(0.5)
-
-
+## Enemy-D(Gobot)が倒された際のアクション
 func _on_e3_death(id: int) -> void:
 	spawn_death_particle(entities[id].position)
-	flags[id] = 0
-	entities[id].position = DEF_VEC2
-	score += 10000
 	Sound.bomb(0.5)
+	__death(id, 10000)
 
 
-func _on_e3_shot(id: int) -> void:
-	spawn_e9(positions[id], 1.0 + entities[id].rotation)
-
-
-func _on_e9_hit_shot(shot: Entity) -> void:
-	spawn_hit_particle(shot.position)
-	shot.death()
-	var id = shot.id
-	entities[id].position = DEF_VEC2
+## death処理ヘルパー
+func __death(id: int, _s: int) -> void:
 	flags[id] = 0
-	Sound.hit(1.2)
+	positions[id] = DEF_VEC2
+	score += _s
 
 
+## Enemy-A(Bullet)が倒された際のアクション
 func _on_e9_death(id: int) -> void:
-	flags[id] = 0
-	entities[id].position = DEF_VEC2
-	score += 10
+	__death(id, 10)
 
 
-func _on_player_area_entered(_area: Area2D) -> void:
+## Enemy-B(Square)の弾発射アクション
+func _on_e2_shot(id: int) -> void:
+	__spawn_e9(positions[id])
+
+
+## Enemy-C(Gobot)の弾発射アクション
+func _on_e3_shot(id: int) -> void:
+	__spawn_e9(positions[id], 1.0 + entities[id].rotation)
+
+
+## プレイヤー破壊時のアクション
+func _on_player_dead(_id: int) -> void:
 	if !game_over:
 		game_over = true
 		player.visible = false
@@ -441,7 +482,7 @@ func _on_player_area_entered(_area: Area2D) -> void:
 		)
 		GodotplayerScore.submit_score("main", score)
 		await get_tree().create_timer(0.05).timeout
-		forces[0] = Vector2.ZERO
+		# forces[0] = Vector2.ZERO
 		for i in range(SHOT_ENTITY_IDX_ORIGIN, SHOT_ENTITY_IDX_ORIGIN + SHOT_ENTITY_SIZE):
 			flags[i] = 0
 			entities[i].hide()
@@ -451,6 +492,3 @@ func _on_player_area_entered(_area: Area2D) -> void:
 		set_physics_process(false)
 		set_process(true)
 
-
-func _on_player_dead() -> void:
-	_on_player_area_entered(null)

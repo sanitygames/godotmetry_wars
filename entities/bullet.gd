@@ -11,8 +11,9 @@ func initialize(_id: int) -> void:
 	id = _id
 
 
-func spawn(_pos: Vector2) -> void:
-	pass
+func spawn(_pos: Vector2, _rot: float = 0.0) -> void:
+	position = _pos
+	rotation = _rot
 
 
 func move(delta: float, _d: Dictionary = {}) -> Vector2:
@@ -22,4 +23,4 @@ func move(delta: float, _d: Dictionary = {}) -> Vector2:
 
 
 func death() -> void:
-	pass
+	position = DEF_VEC2

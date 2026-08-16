@@ -1,6 +1,10 @@
 @abstract extends Node2D
 class_name Entity
 
+signal hit(bullet: Entity)
+signal dead(id: int)
+signal shoot(id: int)
+
 const DEF_VEC2 := Vector2(9999, 9999)
 
 @export var max_life := 1
@@ -15,10 +19,11 @@ func initialize(_id: int) -> void:
 	set_deferred("monitoring", false)
 
 
-func spawn(pos: Vector2) -> void:
+func spawn(pos: Vector2, _rot: float = 0.0) -> void:
 	life = max_life
 	position = pos
 	set_deferred("monitoring", true)
 
 func death() -> void:
 	set_deferred("monitoring", false)
+	position = DEF_VEC2
