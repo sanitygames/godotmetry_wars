@@ -1,14 +1,18 @@
 extends Entity
 
 const SPEED := 30.0
-signal e2_hit_shot(area: Area2D)
+const MAX_LIFE := 30
+signal e2_hit_shot(shot: Area2D)
 signal e2_death(id: int)
 signal e2_shot(id: int)
 
 var target := Vector2.INF
-var life := 30
 
 var time := 0.0
+
+
+func _ready() -> void:
+	max_life = MAX_LIFE
 
 
 func move(delta: float, _d: Dictionary = {}) -> Vector2:
@@ -25,19 +29,16 @@ func move(delta: float, _d: Dictionary = {}) -> Vector2:
 	time += delta
 	if time >= 0.4:
 		time = 0.0
-		e2_shot.emit(id)
+		if 0 < position.x && position.x < 800 && 0 < position.y && position.y < 600:
+			e2_shot.emit(id)
 
 	return position
 
 
-func _on_area_entered(area: Entity) -> void:
-	if visible:
-		if area is Player:
-			print(area, " PLAYER")
-		if area is Bullet:
-			e2_hit_shot.emit(area)
-			life -= 1
-			if life <= 0:
-				e2_death.emit(id)
-				life = 20
-				target = Vector2.INF
+func _on_area_entered(shot: Entity) -> void:
+	e2_hit_shot.emit(shot)
+	life -= 1
+	if life <= 0:
+		e2_death.emit(id)
+		target = Vector2.INF
+		death()

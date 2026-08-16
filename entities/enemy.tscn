@@ -10,7 +10,6 @@ shader_parameter/col = Color(1.891445, 1.0359969, 1.3781319, 1)
 
 [node name="Enemy00" type="Area2D" unique_id=1061548829]
 collision_layer = 4
-collision_mask = 3
 script = ExtResource("1_4gyqm")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=974817729]

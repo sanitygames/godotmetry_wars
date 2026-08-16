@@ -61,11 +61,9 @@ metadata/_edit_group_ = true
 
 [node name="Player" parent="." unique_id=135505630 instance=ExtResource("3_h2yge")]
 position = Vector2(400, 300)
-collision_layer = 2
-collision_mask = 12
 
 [node name="Wall" type="Area2D" parent="." unique_id=46948356]
-collision_layer = 256
+collision_layer = 0
 collision_mask = 9
 monitorable = false
 
@@ -93,10 +91,9 @@ curve = SubResource("Curve2D_7mycd")
 [node name="E1Spawner" type="PathFollow2D" parent="E1Path" unique_id=714746598]
 position = Vector2(-400, -400)
 
-[node name="DeathParticle" parent="." unique_id=259520077 instance=ExtResource("8_5vw27")]
-position = Vector2(368, 272)
+[node name="Outside" type="Node2D" parent="." unique_id=1227705554]
 
-[node name="ColorRect6" type="ColorRect" parent="." unique_id=900219542]
+[node name="ColorRect6" type="ColorRect" parent="Outside" unique_id=900219542]
 z_index = 2
 offset_left = -1600.0
 offset_top = -400.0
@@ -104,7 +101,7 @@ offset_right = -8.0
 offset_bottom = 1192.0
 color = Color(0, 0, 0, 1)
 
-[node name="ColorRect7" type="ColorRect" parent="." unique_id=1178348688]
+[node name="ColorRect7" type="ColorRect" parent="Outside" unique_id=1178348688]
 z_index = 2
 offset_left = -392.0
 offset_top = 608.0
@@ -112,7 +109,7 @@ offset_right = 1200.0
 offset_bottom = 2200.0
 color = Color(0, 0, 0, 1)
 
-[node name="ColorRect8" type="ColorRect" parent="." unique_id=1883111932]
+[node name="ColorRect8" type="ColorRect" parent="Outside" unique_id=1883111932]
 z_index = 2
 offset_left = 808.0
 offset_top = -592.0
@@ -120,7 +117,7 @@ offset_right = 2400.0
 offset_bottom = 1000.0
 color = Color(0, 0, 0, 1)
 
-[node name="ColorRect9" type="ColorRect" parent="." unique_id=1790194195]
+[node name="ColorRect9" type="ColorRect" parent="Outside" unique_id=1790194195]
 z_index = 2
 offset_left = -392.0
 offset_top = -1600.0
@@ -152,4 +149,5 @@ text = "SCORE: 000000"
 horizontal_alignment = 2
 
 [connection signal="area_entered" from="Player" to="." method="_on_player_area_entered"]
+[connection signal="dead" from="Player" to="." method="_on_player_dead"]
 [connection signal="area_entered" from="Wall" to="." method="_on_wall_area_entered"]

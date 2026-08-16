@@ -8,7 +8,6 @@ radius = 47.010635
 
 [node name="Enemy02" type="Area2D" unique_id=629523478]
 collision_layer = 4
-collision_mask = 3
 script = ExtResource("1_bjrl7")
 
 [node name="ForcePoint" type="Node2D" parent="." unique_id=189744256]

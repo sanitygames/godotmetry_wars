@@ -74,6 +74,7 @@ func _ready() -> void:
 	print(Score.ranking)
 	Sound.is_title = false
 	set_process(false)
+
 	entities.append(player)
 	flags.append(1)
 	positions.append(player.position)
@@ -119,7 +120,7 @@ func _ready() -> void:
 		var _e1: Entity = e1_inst.instantiate()
 		_e1.position = DEF_VEC2
 		_e1.id = E1_IDX_ORIGIN + i
-		_e1.visible = false
+		_e1.monitoring = false
 		_e1.e1_hit_shot.connect(_on_e1_hit_shot)
 		_e1.e1_death.connect(_on_e1_death)
 		add_child(_e1)
@@ -133,7 +134,7 @@ func _ready() -> void:
 		var _e2: Entity = e2_inst.instantiate()
 		_e2.position = DEF_VEC2
 		_e2.id = E2_IDX_ORIGIN + i
-		_e2.visible = false
+		_e2.monitoring = false
 		_e2.e2_hit_shot.connect(_on_e2_hit_shot)
 		_e2.e2_death.connect(_on_e2_death)
 		_e2.e2_shot.connect(_on_e2_shot)
@@ -148,7 +149,7 @@ func _ready() -> void:
 		var _e3: Entity = e3_inst.instantiate()
 		_e3.position = DEF_VEC2
 		_e3.id = E3_IDX_ORIGIN + i
-		_e3.visible = false
+		_e3.monitoring = false
 		_e3.e3_hit_shot.connect(_on_e3_hit_shot)
 		_e3.e3_death.connect(_on_e3_death)
 		_e3.e3_shot.connect(_on_e3_shot)
@@ -163,7 +164,7 @@ func _ready() -> void:
 		var _e9: Entity = e9_inst.instantiate()
 		_e9.position = DEF_VEC2
 		_e9.id = E9_IDX_ORIGIN + i
-		_e9.visible = false
+		_e9.monitoring = false
 		_e9.e9_hit_shot.connect(_on_e9_hit_shot)
 		_e9.e9_death.connect(_on_e9_death)
 		add_child(_e9)
@@ -207,8 +208,9 @@ func _physics_process(delta: float) -> void:
 		shot_idx = (shot_idx + 1) % SHOT_ENTITY_SIZE
 
 	for i in range(SHOT_ENTITY_IDX_ORIGIN, SHOT_ENTITY_IDX_ORIGIN + SHOT_ENTITY_SIZE):
-		var pos = entities[i].move(delta)
-		positions[i] = pos
+		if flags[i] == 1:
+			var pos = entities[i].move(delta)
+			positions[i] = pos
 
 	e1_timer += delta
 	if e1_timer >= e1_interval:
@@ -216,10 +218,10 @@ func _physics_process(delta: float) -> void:
 		if flags[_idx] == 0:
 			e1_timer = 0.0
 			flags[_idx] = 1
-			entities[_idx].position = get_e1_position(timer)
-			entities[_idx].visible = true
+			var pos = get_e1_position(timer)
+			entities[_idx].spawn(pos)
+			positions[_idx] = pos
 			entities[_idx].accell = randf_range(0.8, min(1.0 + e1_death * 0.03, 2.0))
-			positions[_idx] = entities[_idx].position
 		e1_idx = (e1_idx + 1) % E1_ENTITY_SIZE
 
 	e2_timer += delta
@@ -228,9 +230,9 @@ func _physics_process(delta: float) -> void:
 		if flags[_idx] == 0:
 			e2_timer = 0.0
 			flags[_idx] = 1
-			entities[_idx].position = get_e1_position(timer)
-			entities[_idx].visible = true
-			positions[_idx] = entities[_idx].position
+			var pos = get_e1_position(timer)
+			entities[_idx].spawn(pos)
+			positions[_idx] = pos
 		e2_idx = (e2_idx + 1) % E2_ENTITY_SIZE
 
 	e3_timer += delta
@@ -239,9 +241,9 @@ func _physics_process(delta: float) -> void:
 		if flags[_idx] == 0:
 			e3_timer = 0.0
 			flags[_idx] = 1
-			entities[_idx].position = get_e1_position(timer)
-			entities[_idx].visible = true
-			positions[_idx] = entities[_idx].position
+			var pos = get_e1_position(timer)
+			entities[_idx].spawn(pos)
+			positions[_idx] = pos
 		e3_idx = (e3_idx + 1) % E3_ENTITY_SIZE
 
 	for i in range(E1_IDX_ORIGIN, E1_IDX_ORIGIN + E1_ENTITY_SIZE):
@@ -312,11 +314,11 @@ func spawn_e9(pos: Vector2, t: int = 0) -> void:
 		var idx = e9_idx + E9_IDX_ORIGIN
 		if flags[idx] == 0:
 			flags[idx] = 1
-			entities[idx].position = pos
-			entities[idx].visible = true
+			entities[idx].spawn(pos)
+			positions[idx] = pos
+			entities[idx].set_deferred("monitoring", true)
 			if t != 0:
 				entities[idx].dir = Vector2(cos(timer), sin(sin(timer)))
-			positions[idx] = pos
 			e9_idx = (e9_idx + 1) % E9_ENTITY_SIZE
 			break
 		e9_idx = (e9_idx + 1) % E9_ENTITY_SIZE
@@ -346,11 +348,10 @@ func _on_death_particle_emit_finished(id: int) -> void:
 	positions[id] = DEF_VEC2
 
 
-func _on_e1_hit_shot(area: Entity) -> void:
-	spawn_hit_particle(area.position)
-	var id = area.id
-	entities[id].position = DEF_VEC2
-	flags[id] = 0
+func _on_e1_hit_shot(shot: Entity) -> void:
+	spawn_hit_particle(shot.position)
+	entities[shot.id].position = DEF_VEC2
+	flags[shot.id] = 0
 	Sound.hit(1.0)
 
 
@@ -359,15 +360,14 @@ func _on_e1_death(id: int) -> void:
 	e1_interval -= 0.02
 	e1_death += 1
 	flags[id] = 0
-	entities[id].visible = false
 	entities[id].position = DEF_VEC2
 	score += 100
 	Sound.bomb(1.0)
 
 
-func _on_e2_hit_shot(area: Entity) -> void:
-	spawn_hit_particle(area.position)
-	var id = area.id
+func _on_e2_hit_shot(shot: Entity) -> void:
+	spawn_hit_particle(shot.position)
+	var id = shot.id
 	entities[id].position = DEF_VEC2
 	flags[id] = 0
 	Sound.hit(0.75)
@@ -377,14 +377,12 @@ func _on_e2_death(id: int) -> void:
 	spawn_death_particle(entities[id].position)
 	e2_interval -= 0.10
 	flags[id] = 0
-	entities[id].visible = false
 	entities[id].position = DEF_VEC2
 	score += 1000
 	Sound.bomb(0.75)
 
 
 func _on_e2_shot(id: int) -> void:
-	# TODO: 画面外ではショットをしない
 	spawn_e9(positions[id])
 
 
@@ -399,14 +397,12 @@ func _on_e3_hit_shot(area: Entity) -> void:
 func _on_e3_death(id: int) -> void:
 	spawn_death_particle(entities[id].position)
 	flags[id] = 0
-	entities[id].visible = false
 	entities[id].position = DEF_VEC2
 	score += 10000
 	Sound.bomb(0.5)
 
 
 func _on_e3_shot(id: int) -> void:
-	# TODO: 画面外ではショットをしない
 	spawn_e9(positions[id], 1.0 + entities[id].rotation)
 
 
@@ -420,7 +416,6 @@ func _on_e9_hit_shot(area: Entity) -> void:
 
 func _on_e9_death(id: int) -> void:
 	flags[id] = 0
-	entities[id].visible = false
 	entities[id].position = DEF_VEC2
 	score += 10
 
@@ -437,15 +432,18 @@ func _on_player_area_entered(_area: Area2D) -> void:
 			. set_ease(tween.EASE_OUT)
 			. set_trans(Tween.TRANS_CUBIC)
 		)
-		# forces[0] = Vector2(400, 1000)
 		GodotplayerScore.submit_score("main", score)
 		await get_tree().create_timer(0.05).timeout
 		forces[0] = Vector2.ZERO
 		for i in range(SHOT_ENTITY_IDX_ORIGIN, SHOT_ENTITY_IDX_ORIGIN + SHOT_ENTITY_SIZE):
 			flags[i] = 0
 			entities[i].hide()
-			entities[i].monitoring = false
-			entities[i].monitorable = false
+			entities[i].set_deferred("monitoring", false)
+			entities[i].set_deferred("monitorable", false)
 		await get_tree().create_timer(2.0).timeout
 		set_physics_process(false)
 		set_process(true)
+
+
+func _on_player_dead() -> void:
+	_on_player_area_entered(null)

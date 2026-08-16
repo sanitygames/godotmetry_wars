@@ -13,7 +13,6 @@ radius = 8.0
 
 [node name="Enemy99" type="Area2D" unique_id=2006360758]
 collision_layer = 8
-collision_mask = 3
 script = ExtResource("1_pagj3")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=897438266]

@@ -14,6 +14,8 @@ shader_parameter/b_offset = -3.0
 
 [node name="Player" type="Area2D" unique_id=28638575]
 z_index = 1
+collision_layer = 2
+collision_mask = 12
 script = ExtResource("1_onrkg")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=228682006]
@@ -29,3 +31,5 @@ shape = SubResource("CircleShape2D_h2yge")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1708269488]
 material = SubResource("ShaderMaterial_hqtel")
 position_smoothing_enabled = true
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

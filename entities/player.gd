@@ -1,6 +1,8 @@
 extends Entity
 class_name Player
 
+signal dead
+
 const SPEED := 300.0
 
 var is_move := false
@@ -28,3 +30,7 @@ func move(delta: float, _d: Dictionary = {}) -> Vector2:
 
 	look_at(get_global_mouse_position())
 	return position
+
+
+func _on_area_entered(area: Area2D) -> void:
+	dead.emit()
