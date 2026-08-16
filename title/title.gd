@@ -1,6 +1,6 @@
 extends Control
 
-var menu := "[S] tart     [-/+] volume:%02d"
+const MENU := "[S] tart     [-/+] volume:%02d"
 
 
 func _ready() -> void:
@@ -11,4 +11,4 @@ func _process(_delta: float) -> void:
 	if Input.is_action_pressed("start"):
 		get_tree().change_scene_to_file("res://main/main.tscn")
 
-	$Label2.text = menu % [Sound.volume]
+	$Menu.text = MENU % [Sound.volume]

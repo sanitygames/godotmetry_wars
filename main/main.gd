@@ -384,6 +384,7 @@ func _on_e2_death(id: int) -> void:
 
 
 func _on_e2_shot(id: int) -> void:
+	# TODO: 画面外ではショットをしない
 	spawn_e9(positions[id])
 
 
@@ -405,6 +406,7 @@ func _on_e3_death(id: int) -> void:
 
 
 func _on_e3_shot(id: int) -> void:
+	# TODO: 画面外ではショットをしない
 	spawn_e9(positions[id], 1.0 + entities[id].rotation)
 
 
