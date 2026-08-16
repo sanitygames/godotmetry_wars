@@ -1,24 +1,26 @@
 extends Node2D
 
+const DEF_VEC2 := Vector2(9999, 9999)
+
 const PLAYER_SIZE := 1
-const SHOT_INTERVAL := 0.08
 const SHOT_ENTITY_SIZE := 100
-const HIT_PARTICLE_ENTITY_SIZE := 100
-const DEATH_PARTICLE_ENTITY_SIZE := 20
 const E1_ENTITY_SIZE := 30
 const E2_ENTITY_SIZE := 10
 const E3_ENTITY_SIZE := 5
 const E9_ENTITY_SIZE := 200
-const DEF_VEC2 := Vector2(9999, 9999)
+const HIT_PARTICLE_SIZE := 100
+const DEATH_PARTICLE_SIZE := 20
 
 const PLAYER_FORCE := Vector2(40, 10000)
 const SHOT_FORCE := Vector2(20, 10000)
-const HIT_PARTICLE_FORCE := Vector2(100, 3000)
 const E1_FORCE := Vector2.ZERO
 const E2_FORCE := Vector2.ZERO
 const E3_FORCE := Vector2(200, 56000)
 const E9_FORCE := Vector2.ZERO
+const HIT_PARTICLE_FORCE := Vector2(100, 3000)
 const DEATH_PARTICLE_FORCE := Vector2(150, 28600)
+
+const SCORE_TEXT := "HI-SCORE:%06d\n[%02d]SCORE:%06d\n"
 
 @export var shot_inst: PackedScene
 @export var hit_particle_inst: PackedScene
@@ -32,41 +34,43 @@ const DEATH_PARTICLE_FORCE := Vector2(150, 28600)
 @onready var grid: Node2D = $Grid
 @onready var score_label: Label = $UILayer/ScoreLabel
 
-var SHOT_ENTITY_IDX_ORIGIN := 1
-var HIT_PARTICLE_ENTITY_IDX_ORIGIN := 0
-var DEATH_PARTICLE_ENTITY_IDX_ORIGIN := 0
-var E1_IDX_ORIGIN := 1
-var E2_IDX_ORIGIN := 1
-var E3_IDX_ORIGIN := 1
-var E9_IDX_ORIGIN := 1
+var SHOT_IDX_ORIGIN := 1
+var E1_IDX_ORIGIN := 101
+var E2_IDX_ORIGIN := 131
+var E3_IDX_ORIGIN := 141
+var E9_IDX_ORIGIN := 146
+var HIT_PARTICLE_ORIGIN := 346
+var DEATH_PARTICLE_ORIGIN := 446
 
-var entities: Array = []
+var entities: Array[Entity] = []
 var particles: Array[GPUParticles2D] = []
 var flags: PackedByteArray = []
 var positions: PackedVector2Array = []
 var forces: PackedVector2Array = []
 
 var shot_idx := 0
-var shot_timer := 0.0
+var e1_idx := 0
+var e2_idx := 0
+var e3_idx := 0
+var e9_idx := 0
 var hit_idx := 0
 var death_idx := 0
 
 var timer := 0.0
-var e1_interval := 3.0
-var e1_idx := 0
+var shot_timer := 0.0
 var e1_timer := 1.5
-var e1_death := 0
-var e2_interval := 24.0
-var e2_idx := 0
 var e2_timer := 0.0
-var e3_interval := 64.0
-var e3_idx := 0
 var e3_timer := 0.0
-var e9_idx := 0
+
+var shot_interval := 0.08
+var e1_interval := 3.0
+var e2_interval := 24.0
+var e3_interval := 64.0
+
+var e1_death := 0
 
 var score := 0
 var game_over := false
-
 
 func _ready() -> void:
 	Score.get_ranking()
@@ -81,11 +85,11 @@ func _ready() -> void:
 	forces.append(PLAYER_FORCE)
 
 	# Add PlayerShot
-	SHOT_ENTITY_IDX_ORIGIN = entities.size()
+	SHOT_IDX_ORIGIN = entities.size()
 	for i in SHOT_ENTITY_SIZE:
 		var _s: Entity = shot_inst.instantiate()
 		_s.position = DEF_VEC2
-		_s.id = SHOT_ENTITY_IDX_ORIGIN + i
+		_s.id = SHOT_IDX_ORIGIN + i
 		add_child(_s)
 		entities.append(_s)
 		flags.append(0)
@@ -143,10 +147,10 @@ func _ready() -> void:
 		)
 
 	# Add Particle (Small)
-	HIT_PARTICLE_ENTITY_IDX_ORIGIN = entities.size()
+	HIT_PARTICLE_ORIGIN = entities.size()
 	__add_particle(
-		HIT_PARTICLE_ENTITY_IDX_ORIGIN,
-		HIT_PARTICLE_ENTITY_SIZE,
+		HIT_PARTICLE_ORIGIN,
+		HIT_PARTICLE_SIZE,
 		hit_particle_inst,
 		HIT_PARTICLE_FORCE,
 		_on_hit_particle_emit_finished
@@ -154,21 +158,21 @@ func _ready() -> void:
 		)
 
 	# Add Particle (Big)
-	DEATH_PARTICLE_ENTITY_IDX_ORIGIN = entities.size() + HIT_PARTICLE_ENTITY_SIZE
+	DEATH_PARTICLE_ORIGIN = entities.size() + HIT_PARTICLE_SIZE
 	__add_particle(
-		DEATH_PARTICLE_ENTITY_IDX_ORIGIN,
-		DEATH_PARTICLE_ENTITY_SIZE,
+		DEATH_PARTICLE_ORIGIN,
+		DEATH_PARTICLE_SIZE,
 		death_particle_inst,
 		DEATH_PARTICLE_FORCE,
 		_on_death_particle_emit_finished
 		)
 
 
-
 func _process(delta: float) -> void:
 	timer += delta
-	var go = ["\nGAME OVER\n[R]etry [Q]uit", "\n\n[R]etry [Q]uit"][int(timer) % 2]
-	score_label.text = "HI-SCORE:%06d\nSCORE:%06d%s" % [Score.hi_score, score, go]
+	var text1 = SCORE_TEXT % [Score.hi_score, Score.get_rank(score), score]
+	var text2 = ["GAME OVER\n[R]etry [Q]uit", "\n[R]etry [Q]uit"][int(timer) % 2]
+	score_label.text = text1 + text2
 
 	if Input.is_action_just_pressed("retry"):
 		get_tree().reload_current_scene()
@@ -188,8 +192,8 @@ func _physics_process(delta: float) -> void:
 	# Spawn PlayerShot (指定時間による活性化)
 	# (対象がアクティブの時にはこのフレームをスルー)
 	shot_timer += delta
-	if shot_timer >= SHOT_INTERVAL:
-		var _idx = shot_idx + SHOT_ENTITY_IDX_ORIGIN
+	if shot_timer >= shot_interval:
+		var _idx = shot_idx + SHOT_IDX_ORIGIN
 		if flags[_idx] == 0:
 			entities[_idx].spawn(player.position, player.rotation)
 			shot_timer = 0.0
@@ -234,7 +238,7 @@ func _physics_process(delta: float) -> void:
 		e3_idx = (e3_idx + 1) % E3_ENTITY_SIZE
 
 	# Move PlayerShots
-	for i in range(SHOT_ENTITY_IDX_ORIGIN, SHOT_ENTITY_IDX_ORIGIN + SHOT_ENTITY_SIZE):
+	for i in range(SHOT_IDX_ORIGIN, SHOT_IDX_ORIGIN + SHOT_ENTITY_SIZE):
 		if flags[i] == 1:
 			var pos = entities[i].move(delta)
 			positions[i] = pos
@@ -265,21 +269,20 @@ func _physics_process(delta: float) -> void:
 
 	# ChangeScale DeathParticle
 	for i in range(
-		DEATH_PARTICLE_ENTITY_IDX_ORIGIN,
-		DEATH_PARTICLE_ENTITY_IDX_ORIGIN + DEATH_PARTICLE_ENTITY_SIZE
+		DEATH_PARTICLE_ORIGIN,
+		DEATH_PARTICLE_ORIGIN + DEATH_PARTICLE_SIZE
 	):
 		forces[i].x *= 1.05
 		forces[i].y *= 0.9
 
-	# TODO: 後で修正
 	# Update ScoreUI
 	Score.hi_score = max(Score.hi_score, score)
-	var rank = Score.get_rank(score)
-	score_label.text = "HI-SCORE:%06d\n[%02d]SCORE:%06d" % [Score.hi_score, rank, score]
+	score_label.text = SCORE_TEXT % [Score.hi_score, Score.get_rank(score), score]
 
 	# Update Grid
 	grid.set_data(flags, positions, forces)
 	grid.update(delta)
+
 
 ## 敵エンティティのスポーンとコレクションへの追加
 func __add_enemy(
@@ -311,14 +314,14 @@ func __add_particle(origin: int, size: int, scene: PackedScene, force: Vector2, 
 
 ## Enemy-A(Bullet)をアクティブにする
 ## (任意のタイミング)
-func __spawn_e9(pos: Vector2, t: int = 0) -> void:
+func __spawn_e9(pos: Vector2, t: float = 0.0) -> void:
 	for i in E9_ENTITY_SIZE:
 		var idx = e9_idx + E9_IDX_ORIGIN
 		if flags[idx] == 0:
 			flags[idx] = 1
 			entities[idx].spawn(pos)
 			positions[idx] = pos
-			if t != 0:
+			if t != 0.0:
 				entities[idx].dir = Vector2(cos(timer), sin(sin(timer)))
 			e9_idx = (e9_idx + 1) % E9_ENTITY_SIZE
 			return
@@ -328,33 +331,33 @@ func __spawn_e9(pos: Vector2, t: int = 0) -> void:
 ## HitParticleをアクティブにする
 ## (任意のタイミング)
 func spawn_hit_particle(pos: Vector2) -> void:
-	for i in HIT_PARTICLE_ENTITY_SIZE:
-		var idx = hit_idx + HIT_PARTICLE_ENTITY_IDX_ORIGIN
+	for i in HIT_PARTICLE_SIZE:
+		var idx = hit_idx + HIT_PARTICLE_ORIGIN
 		if flags[idx] == 0:
 			flags[idx] = 1
 			particles[hit_idx].position = pos
 			particles[hit_idx].emitting = true
 			positions[idx] = pos
-			hit_idx = (hit_idx + 1) % HIT_PARTICLE_ENTITY_SIZE
+			hit_idx = (hit_idx + 1) % HIT_PARTICLE_SIZE
 			# Sound.shot()
 			return
-		hit_idx = (hit_idx + 1) % HIT_PARTICLE_ENTITY_SIZE
+		hit_idx = (hit_idx + 1) % HIT_PARTICLE_SIZE
 
 
 ## DeathParticleをアクティブにする
 ## (任意のタイミング)
 func spawn_death_particle(pos: Vector2) -> void:
-	for i in DEATH_PARTICLE_ENTITY_SIZE:
-		var idx = death_idx + DEATH_PARTICLE_ENTITY_IDX_ORIGIN
+	for i in DEATH_PARTICLE_SIZE:
+		var idx = death_idx + DEATH_PARTICLE_ORIGIN
 		if flags[idx] == 0:
 			flags[idx] = 1
-			particles[death_idx + HIT_PARTICLE_ENTITY_SIZE].position = pos
-			particles[death_idx + HIT_PARTICLE_ENTITY_SIZE].emitting = true
+			particles[death_idx + HIT_PARTICLE_SIZE].position = pos
+			particles[death_idx + HIT_PARTICLE_SIZE].emitting = true
 			positions[idx] = pos
 			forces[idx] = DEATH_PARTICLE_FORCE
-			death_idx = (death_idx + 1) % DEATH_PARTICLE_ENTITY_SIZE
+			death_idx = (death_idx + 1) % DEATH_PARTICLE_SIZE
 			return
-		death_idx = (death_idx + 1) % DEATH_PARTICLE_ENTITY_SIZE
+		death_idx = (death_idx + 1) % DEATH_PARTICLE_SIZE
 
 
 ## 敵のスポーン位置の取得
@@ -471,24 +474,24 @@ func _on_e3_shot(id: int) -> void:
 func _on_player_dead(_id: int) -> void:
 	if !game_over:
 		game_over = true
-		player.visible = false
+		player.hide()
+		entities[_id].hide()
 		Sound.game_over()
-		var tween := create_tween()
-		(
-			tween
-			. tween_method(func(v): forces[0] = v, Vector2(170, -300000), Vector2(1300, 100), 1.0)
-			. set_ease(tween.EASE_OUT)
-			. set_trans(Tween.TRANS_CUBIC)
-		)
-		GodotplayerScore.submit_score("main", score)
-		await get_tree().create_timer(0.05).timeout
-		# forces[0] = Vector2.ZERO
-		for i in range(SHOT_ENTITY_IDX_ORIGIN, SHOT_ENTITY_IDX_ORIGIN + SHOT_ENTITY_SIZE):
+
+		for i in range(SHOT_IDX_ORIGIN, SHOT_IDX_ORIGIN + SHOT_ENTITY_SIZE):
 			flags[i] = 0
 			entities[i].hide()
 			entities[i].set_deferred("monitoring", false)
 			entities[i].set_deferred("monitorable", false)
-		await get_tree().create_timer(2.0).timeout
+
+		var tween := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+		tween.tween_method(
+			func(v): forces[0] = v,
+			Vector2(170, -300000),
+			Vector2(1300, 100), 1.0)
+
+		GodotplayerScore.submit_score("main", score)
+
+		await get_tree().create_timer(3.0).timeout
 		set_physics_process(false)
 		set_process(true)
-

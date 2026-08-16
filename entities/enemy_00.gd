@@ -3,9 +3,6 @@ extends Entity
 const SPEED := 100.0
 const MAX_LIFE := 4
 
-# signal e1_hit_shot(area)
-# signal e1_death(id)
-
 var accell := 1.0
 var timer := 0.0
 var target := Vector2(400, 300)
