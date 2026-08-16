@@ -148,6 +148,5 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_efxa6")
 text = "SCORE: 000000"
 horizontal_alignment = 2
 
-[connection signal="area_entered" from="Player" to="." method="_on_player_area_entered"]
 [connection signal="dead" from="Player" to="." method="_on_player_dead"]
 [connection signal="area_entered" from="Wall" to="." method="_on_wall_area_entered"]

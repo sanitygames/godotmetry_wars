@@ -33,4 +33,5 @@ func move(delta: float, _d: Dictionary = {}) -> Vector2:
 
 
 func _on_area_entered(area: Area2D) -> void:
-	dead.emit()
+	# dead.emit()
+	pass

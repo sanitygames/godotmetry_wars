@@ -1,9 +1,9 @@
 extends Node2D
 
 const PLAYER_SIZE := 1
-const SHOT_INTERVAL := 0.06
+const SHOT_INTERVAL := 0.08
 const SHOT_ENTITY_SIZE := 100
-const HIT_PARTICLE_ENTITY_SIZE := 200
+const HIT_PARTICLE_ENTITY_SIZE := 100
 const DEATH_PARTICLE_ENTITY_SIZE := 20
 const E1_ENTITY_SIZE := 20
 const E2_ENTITY_SIZE := 20
@@ -14,8 +14,6 @@ const DEF_VEC2 := Vector2(9999, 9999)
 const PLAYER_FORCE := Vector2(40, 10000)
 const SHOT_FORCE := Vector2(20, 10000)
 const HIT_PARTICLE_FORCE := Vector2(100, 3000)
-# const E1_FORCE := Vector2(100, 1500)
-# const E2_FORCE := Vector2(100, 1500)
 const E1_FORCE := Vector2.ZERO
 const E2_FORCE := Vector2.ZERO
 const E3_FORCE := Vector2(200, 56000)
@@ -43,6 +41,7 @@ var E3_IDX_ORIGIN := 1
 var E9_IDX_ORIGIN := 1
 
 var entities: Array = []
+var particles: Array[GPUParticles2D] = []
 var flags: PackedByteArray = []
 var positions: PackedVector2Array = []
 var forces: PackedVector2Array = []
@@ -57,7 +56,7 @@ var e1_interval := 3.0
 var e1_idx := 0
 var e1_timer := 1.5
 var e1_death := 0
-var e2_interval := 23.3
+var e2_interval := 24.0
 var e2_idx := 0
 var e2_timer := 0.0
 var e3_interval := 64.0
@@ -80,7 +79,6 @@ func _ready() -> void:
 	positions.append(player.position)
 	forces.append(PLAYER_FORCE)
 
-	SHOT_ENTITY_IDX_ORIGIN = entities.size()
 	for i in SHOT_ENTITY_SIZE:
 		var _s: Entity = shot_inst.instantiate()
 		_s.position = DEF_VEC2
@@ -91,36 +89,13 @@ func _ready() -> void:
 		positions.append(DEF_VEC2)
 		forces.append(SHOT_FORCE if i % 3 == 0 else Vector2.ZERO)
 
-	HIT_PARTICLE_ENTITY_IDX_ORIGIN = entities.size()
-	for i in HIT_PARTICLE_ENTITY_SIZE:
-		var _p: GPUParticles2D = hit_particle_inst.instantiate()
-		_p.position = DEF_VEC2
-		_p.id = HIT_PARTICLE_ENTITY_IDX_ORIGIN + i
-		_p.emit_finished.connect(_on_hit_particle_emit_finished)
-		add_child(_p)
-		entities.append(_p)
-		flags.append(0)
-		positions.append(DEF_VEC2)
-		forces.append(HIT_PARTICLE_FORCE)
-
-	DEATH_PARTICLE_ENTITY_IDX_ORIGIN = entities.size()
-	for i in DEATH_PARTICLE_ENTITY_SIZE:
-		var _dp: GPUParticles2D = death_particle_inst.instantiate()
-		_dp.position = DEF_VEC2
-		_dp.id = DEATH_PARTICLE_ENTITY_IDX_ORIGIN + i
-		_dp.emit_finished.connect(_on_death_particle_emit_finished)
-		add_child(_dp)
-		entities.append(_dp)
-		flags.append(0)
-		positions.append(DEF_VEC2)
-		forces.append(DEATH_PARTICLE_FORCE)
-
 	E1_IDX_ORIGIN = entities.size()
 	for i in E1_ENTITY_SIZE:
 		var _e1: Entity = e1_inst.instantiate()
-		_e1.position = DEF_VEC2
-		_e1.id = E1_IDX_ORIGIN + i
-		_e1.monitoring = false
+		_e1.initialize(E1_IDX_ORIGIN + i)
+		# _e1.position = DEF_VEC2
+		# _e1.id = E1_IDX_ORIGIN + i
+		# _e1.monitoring = false
 		_e1.e1_hit_shot.connect(_on_e1_hit_shot)
 		_e1.e1_death.connect(_on_e1_death)
 		add_child(_e1)
@@ -132,9 +107,10 @@ func _ready() -> void:
 	E2_IDX_ORIGIN = entities.size()
 	for i in E2_ENTITY_SIZE:
 		var _e2: Entity = e2_inst.instantiate()
-		_e2.position = DEF_VEC2
-		_e2.id = E2_IDX_ORIGIN + i
-		_e2.monitoring = false
+		_e2.initialize(E2_IDX_ORIGIN + i)
+		# _e2.position = DEF_VEC2
+		# _e2.id = E2_IDX_ORIGIN + i
+		# _e2.monitoring = false
 		_e2.e2_hit_shot.connect(_on_e2_hit_shot)
 		_e2.e2_death.connect(_on_e2_death)
 		_e2.e2_shot.connect(_on_e2_shot)
@@ -147,9 +123,10 @@ func _ready() -> void:
 	E3_IDX_ORIGIN = entities.size()
 	for i in E3_ENTITY_SIZE:
 		var _e3: Entity = e3_inst.instantiate()
-		_e3.position = DEF_VEC2
-		_e3.id = E3_IDX_ORIGIN + i
-		_e3.monitoring = false
+		_e3.initialize(E3_IDX_ORIGIN + i)
+		# _e3.position = DEF_VEC2
+		# _e3.id = E3_IDX_ORIGIN + i
+		# _e3.monitoring = false
 		_e3.e3_hit_shot.connect(_on_e3_hit_shot)
 		_e3.e3_death.connect(_on_e3_death)
 		_e3.e3_shot.connect(_on_e3_shot)
@@ -162,9 +139,10 @@ func _ready() -> void:
 	E9_IDX_ORIGIN = entities.size()
 	for i in E9_ENTITY_SIZE:
 		var _e9: Entity = e9_inst.instantiate()
-		_e9.position = DEF_VEC2
-		_e9.id = E9_IDX_ORIGIN + i
-		_e9.monitoring = false
+		_e9.initialize(E9_IDX_ORIGIN + i)
+		# _e9.position = DEF_VEC2
+		# _e9.id = E9_IDX_ORIGIN + i
+		# _e9.monitoring = false
 		_e9.e9_hit_shot.connect(_on_e9_hit_shot)
 		_e9.e9_death.connect(_on_e9_death)
 		add_child(_e9)
@@ -172,6 +150,30 @@ func _ready() -> void:
 		flags.append(0)
 		positions.append(DEF_VEC2)
 		forces.append(E9_FORCE)
+
+	HIT_PARTICLE_ENTITY_IDX_ORIGIN = entities.size()
+	for i in HIT_PARTICLE_ENTITY_SIZE:
+		var _p: GPUParticles2D = hit_particle_inst.instantiate()
+		_p.position = DEF_VEC2
+		_p.finished.connect(_on_hit_particle_emit_finished.bind(HIT_PARTICLE_ENTITY_IDX_ORIGIN + i))
+		add_child(_p)
+		particles.append(_p)
+		flags.append(0)
+		positions.append(DEF_VEC2)
+		forces.append(HIT_PARTICLE_FORCE)
+
+	DEATH_PARTICLE_ENTITY_IDX_ORIGIN = entities.size() + HIT_PARTICLE_ENTITY_SIZE
+	for i in DEATH_PARTICLE_ENTITY_SIZE:
+		var _dp: GPUParticles2D = death_particle_inst.instantiate()
+		_dp.position = DEF_VEC2
+		_dp.finished.connect(
+			_on_death_particle_emit_finished.bind(DEATH_PARTICLE_ENTITY_IDX_ORIGIN + i)
+		)
+		add_child(_dp)
+		particles.append(_dp)
+		flags.append(0)
+		positions.append(DEF_VEC2)
+		forces.append(DEATH_PARTICLE_FORCE)
 
 
 func _process(delta: float) -> void:
@@ -282,16 +284,16 @@ func _physics_process(delta: float) -> void:
 
 
 func spawn_hit_particle(pos: Vector2) -> void:
-	for i in 10:
+	for i in HIT_PARTICLE_ENTITY_SIZE:
 		var idx = hit_idx + HIT_PARTICLE_ENTITY_IDX_ORIGIN
 		if flags[idx] == 0:
 			flags[idx] = 1
-			entities[idx].position = pos
+			particles[hit_idx].position = pos
+			particles[hit_idx].emitting = true
 			positions[idx] = pos
-			entities[idx].emitting = true
 			hit_idx = (hit_idx + 1) % HIT_PARTICLE_ENTITY_SIZE
 			Sound.shot()
-			break
+			return
 		hit_idx = (hit_idx + 1) % HIT_PARTICLE_ENTITY_SIZE
 
 
@@ -300,12 +302,12 @@ func spawn_death_particle(pos: Vector2) -> void:
 		var idx = death_idx + DEATH_PARTICLE_ENTITY_IDX_ORIGIN
 		if flags[idx] == 0:
 			flags[idx] = 1
-			entities[idx].position = pos
+			particles[death_idx + HIT_PARTICLE_ENTITY_SIZE].position = pos
+			particles[death_idx + HIT_PARTICLE_ENTITY_SIZE].emitting = true
 			positions[idx] = pos
-			entities[idx].emitting = true
 			forces[idx] = DEATH_PARTICLE_FORCE
 			death_idx = (death_idx + 1) % DEATH_PARTICLE_ENTITY_SIZE
-			break
+			return
 		death_idx = (death_idx + 1) % DEATH_PARTICLE_ENTITY_SIZE
 
 
@@ -316,22 +318,22 @@ func spawn_e9(pos: Vector2, t: int = 0) -> void:
 			flags[idx] = 1
 			entities[idx].spawn(pos)
 			positions[idx] = pos
-			entities[idx].set_deferred("monitoring", true)
 			if t != 0:
 				entities[idx].dir = Vector2(cos(timer), sin(sin(timer)))
 			e9_idx = (e9_idx + 1) % E9_ENTITY_SIZE
-			break
+			return
 		e9_idx = (e9_idx + 1) % E9_ENTITY_SIZE
 
 
-func get_e1_position(t: float) -> Vector2:
+func get_e1_position(_t: float) -> Vector2:
 	$E1Path/E1Spawner.progress_ratio = randf()
 	return $E1Path/E1Spawner.position
 
 
-func _on_wall_area_entered(area: Area2D) -> void:
-	var id = area.id
-	var pos = area.position
+func _on_wall_area_entered(entity: Entity) -> void:
+	var id = entity.id
+	var pos = entity.position
+	entity.death()
 	spawn_hit_particle(pos)
 	flags[id] = 0
 	entities[id].position = DEF_VEC2
@@ -339,6 +341,7 @@ func _on_wall_area_entered(area: Area2D) -> void:
 
 
 func _on_hit_particle_emit_finished(id: int) -> void:
+	# prints("HITFINISH", id, timer)
 	flags[id] = 0
 	positions[id] = DEF_VEC2
 
@@ -350,6 +353,7 @@ func _on_death_particle_emit_finished(id: int) -> void:
 
 func _on_e1_hit_shot(shot: Entity) -> void:
 	spawn_hit_particle(shot.position)
+	shot.death()
 	entities[shot.id].position = DEF_VEC2
 	flags[shot.id] = 0
 	Sound.hit(1.0)
@@ -367,6 +371,7 @@ func _on_e1_death(id: int) -> void:
 
 func _on_e2_hit_shot(shot: Entity) -> void:
 	spawn_hit_particle(shot.position)
+	shot.death()
 	var id = shot.id
 	entities[id].position = DEF_VEC2
 	flags[id] = 0
@@ -386,9 +391,10 @@ func _on_e2_shot(id: int) -> void:
 	spawn_e9(positions[id])
 
 
-func _on_e3_hit_shot(area: Entity) -> void:
-	spawn_hit_particle(area.position)
-	var id = area.id
+func _on_e3_hit_shot(shot: Entity) -> void:
+	spawn_hit_particle(shot.position)
+	shot.death()
+	var id = shot.id
 	entities[id].position = DEF_VEC2
 	flags[id] = 0
 	Sound.hit(0.5)
@@ -406,9 +412,10 @@ func _on_e3_shot(id: int) -> void:
 	spawn_e9(positions[id], 1.0 + entities[id].rotation)
 
 
-func _on_e9_hit_shot(area: Entity) -> void:
-	spawn_hit_particle(area.position)
-	var id = area.id
+func _on_e9_hit_shot(shot: Entity) -> void:
+	spawn_hit_particle(shot.position)
+	shot.death()
+	var id = shot.id
 	entities[id].position = DEF_VEC2
 	flags[id] = 0
 	Sound.hit(1.2)

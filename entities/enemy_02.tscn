@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://cwkb1obft4sn8" path="res://entities/enemy_02.gd" id="1_bjrl7"]
 [ext_resource type="Texture2D" uid="uid://ft4bfv02m05a" path="res://img/icon.svg" id="2_8mdog"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_bjrl7"]
-radius = 47.010635
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tfw3w"]
+size = Vector2(94, 94)
 
 [node name="Enemy02" type="Area2D" unique_id=629523478]
 collision_layer = 4
@@ -18,6 +18,6 @@ scale = Vector2(0.75, 0.75)
 texture = ExtResource("2_8mdog")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=701095780]
-shape = SubResource("CircleShape2D_bjrl7")
+shape = SubResource("RectangleShape2D_tfw3w")
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]

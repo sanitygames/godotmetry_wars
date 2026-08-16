@@ -1,7 +1,7 @@
 extends Entity
 
 const SPEED := 30.0
-const MAX_LIFE := 30
+const MAX_LIFE := 16
 signal e2_hit_shot(shot: Area2D)
 signal e2_death(id: int)
 signal e2_shot(id: int)

@@ -31,8 +31,7 @@ func _on_area_entered(area: Entity) -> void:
 	e9_hit_shot.emit(area)
 	life -= 1
 	if life <= 0:
-		set_deferred("monitoring", false)
 		e9_death.emit(id)
-		life = 1
 		speed = SPEED
 		dir = Vector2.INF
+		death()
