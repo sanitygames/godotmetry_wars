@@ -18,9 +18,9 @@ const HIT_PARTICLE_FORCE := Vector2(100, 30)
 # const E2_FORCE := Vector2(100, 1500)
 const E1_FORCE := Vector2.ZERO
 const E2_FORCE := Vector2.ZERO
-const E3_FORCE := Vector2(300, 80)
+const E3_FORCE := Vector2(300, 600)
 const E9_FORCE := Vector2.ZERO
-const DEATH_PARTICLE_FORCE := Vector2(200, 100)
+const DEATH_PARTICLE_FORCE := Vector2(200, 300)
 
 @export var shot_inst: PackedScene
 @export var hit_particle_inst: PackedScene
@@ -70,6 +70,8 @@ var game_over := false
 
 
 func _ready() -> void:
+	for i in range(-100, 100):
+		print(exp(i * 0.0001))
 	Sound.is_title = false
 	set_process(false)
 	entities.append(player)

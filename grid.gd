@@ -22,10 +22,8 @@ var draw_points := PackedVector2Array()
 
 var flag := false
 
-var force_pos := Vector2.ZERO
-var force := 0.0
-var force_radius := 0.0
-var forces := PackedVector4Array()
+var force_ps := PackedVector2Array()
+var force_ds := PackedVector2Array()
 var forces_size := 0
 
 
@@ -47,7 +45,8 @@ func _ready() -> void:
 			didxs.append(get_idx(x, y))
 			didxs.append(get_idx(x, y + 1))
 
-	forces.resize(400)
+	force_ps.resize(400)
+	force_ds.resize(400)
 	draw_points.resize(didxs.size())
 
 
@@ -55,48 +54,36 @@ func set_data(_bs: PackedByteArray, ps: PackedVector2Array, fs: PackedVector2Arr
 	forces_size = 0
 	for i in _bs.size():
 		if _bs[i] == 1 && fs[i] != Vector2.ZERO:
-			forces[forces_size].x = ps[i].x + 80.0
-			forces[forces_size].y = ps[i].y + 80.0
-			forces[forces_size].z = fs[i].x
-			forces[forces_size].w = fs[i].y
+			force_ps[forces_size] = ps[i] + Vector2(80, 80)
+			force_ds[forces_size] = fs[i]
 			forces_size += 1
 
 
 func update(delta: float) -> void:
+	# var start = Time.get_ticks_usec()
 	for i in forces_size:
-		var lx = forces[i].x - forces[i].z
-		var rx = forces[i].x + forces[i].z
-		var ly = forces[i].y - forces[i].z
-		var ry = forces[i].y + forces[i].z
-		lx = floor(lx / GRID_SPACING)
-		rx = ceil(rx / GRID_SPACING)
-		ly = floor(ly / GRID_SPACING)
-		ry = ceil(ry / GRID_SPACING)
+		var lx = floor((force_ps[i].x - force_ds[i].x) / GRID_SPACING)
+		var rx = ceil((force_ps[i].x + force_ds[i].x) / GRID_SPACING)
+		var ly = floor((force_ps[i].y - force_ds[i].x) / GRID_SPACING)
+		var ry = ceil((force_ps[i].y + force_ds[i].x) / GRID_SPACING)
 
-		var r_sq = forces[i].z * forces[i].z
 		for y in range(max(ly - 1, 0), min(ry + 1, GRID_SIZE.y)):
 			for x in range(max(lx - 1, 0), min(rx + 1, GRID_SIZE.x)):
-				var idx = get_idx(x, y)
-				var spos = positions[idx]
-				var fpos = Vector2(forces[i].x, forces[i].y)
-				# TODO: distance_to_sqrt
-				var d = spos - fpos
-				# var dist_sq = d.x * d.x + d.y * d.y
-				var dist_sq = spos.distance_squared_to(fpos)
-				if dist_sq < r_sq:
-					var dir = d.normalized()
-					# TODO: facの関数について
-					# var fac = dist_sq / r_sq
-					var fac = cos(sqrt(dist_sq) / forces[i].z)
-					# velocities[idx] += dir * forces[i].w * fac * delta
-					velocities[idx] += d * forces[i].w * delta
+				var idx = GRID_SIZE.x * y + x
+				var distance = positions[idx].distance_to(force_ps[i])
+				if distance < force_ds[i].x:
+					var fac = sin(PI * distance / force_ds[i].x)
+					var dir = force_ps[i].direction_to(positions[idx])
+					velocities[idx] += dir * fac * force_ds[i].y * delta * 100.0
+
+	# var end = Time.get_ticks_usec()
+	# print(end - start)
 
 	update_physics(delta)
 	queue_redraw()
 
 
 func update_physics(delta: float) -> void:
-	var start = Time.get_ticks_usec()
 	for idx in idxs:
 		var pos = positions[idx]
 		var f = (rest_positions[idx] - pos) * SPRING_K
@@ -112,9 +99,6 @@ func update_physics(delta: float) -> void:
 	for idx in didxs:
 		draw_points[i] = positions[idx]
 		i += 1
-
-	var end = Time.get_ticks_usec()
-	print(end - start)
 
 
 func _draw() -> void:
