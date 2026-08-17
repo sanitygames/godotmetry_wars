@@ -79,6 +79,7 @@ func _ready() -> void:
 	print(Score.ranking)
 	Sound.is_title = false
 	set_process(false)
+	set_physics_process(false)
 
 	# Add Player
 	entities.append(player)
@@ -169,6 +170,15 @@ func _ready() -> void:
 		_on_death_particle_emit_finished
 		)
 
+	for i in HIT_PARTICLE_SIZE:
+		spawn_hit_particle(Vector2(200, 300))
+	for i in DEATH_PARTICLE_SIZE:
+		spawn_death_particle(Vector2(200, 300))
+
+	await get_tree().create_timer(0.8).timeout
+	$UILayer/ColorRect.hide()
+	set_physics_process(true)
+
 
 func _process(delta: float) -> void:
 	timer += delta
@@ -179,7 +189,7 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("retry"):
 		get_tree().reload_current_scene()
 	if Input.is_action_pressed("quit"):
-		get_tree().change_scene_to_file("res://title/title.tscn")
+		get_tree().change_scene_to_file("res://title.tscn")
 
 
 func _physics_process(delta: float) -> void:
