@@ -42,6 +42,7 @@ folder_colors={
 "res://img/": "yellow",
 "res://main/": "orange",
 "res://ogg/": "yellow",
+"res://shaders/": "teal",
 "res://title/": "orange",
 "res://web/": "gray"
 }

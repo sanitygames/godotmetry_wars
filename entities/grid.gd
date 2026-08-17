@@ -2,14 +2,9 @@ extends Node2D
 
 const GRID_SIZE := Vector2i(48, 36)
 const GRID_SPACING := 20.0
-# const GRID_SIZE := Vector2i(96, 72)
-# const GRID_SPACING := 10.0
 const SPRING_K := 300.0
 const NEIGHBOR_K := 0.8
 const DAMPING := 0.90
-
-# var force_radius := 100.0
-# var force_strength := -2000.0
 
 @export var grid_color: Color = Color.GREEN_YELLOW
 
@@ -20,13 +15,12 @@ var idxs := PackedInt32Array()
 var didxs := PackedInt32Array()
 var draw_points := PackedVector2Array()
 
-var flag := false
-
 var force_ps := PackedVector2Array()
 var force_ds := PackedVector2Array()
 var forces_size := 0
 
 
+## 各種データ格納用PackedArrayの初期化
 func _ready() -> void:
 	for y in GRID_SIZE.y:
 		for x in GRID_SIZE.x:
@@ -40,9 +34,9 @@ func _ready() -> void:
 
 	for y in GRID_SIZE.y - 1:
 		for x in GRID_SIZE.x - 1:
-			didxs.append(get_idx(x, y))
+			didxs.append(get_idx(x + 1, y + 1))
 			didxs.append(get_idx(x + 1, y))
-			didxs.append(get_idx(x, y))
+			didxs.append(get_idx(x + 1, y + 1))
 			didxs.append(get_idx(x, y + 1))
 
 	force_ps.resize(400)
@@ -50,6 +44,10 @@ func _ready() -> void:
 	draw_points.resize(didxs.size())
 
 
+## Array[Entity]が持つデータのうち､
+## アクティブかつ0パワーでないものをforce配列に格納
+## force_ps: Vector2(position.x, position.y)
+## foece_ds: Vector2(force_radius, force_power)
 func set_data(_bs: PackedByteArray, ps: PackedVector2Array, fs: PackedVector2Array) -> void:
 	forces_size = 0
 	for i in _bs.size():
@@ -59,6 +57,8 @@ func set_data(_bs: PackedByteArray, ps: PackedVector2Array, fs: PackedVector2Arr
 			forces_size += 1
 
 
+## Gridがもつ質点毎のベロシティをvelocitiesに得る
+## forceが明らかにかからない質点についてはスルー
 func update(delta: float) -> void:
 	for i in forces_size:
 		var lx = floor((force_ps[i].x - force_ds[i].x) / GRID_SPACING)
@@ -79,6 +79,8 @@ func update(delta: float) -> void:
 	queue_redraw()
 
 
+## Gridがもつ質点毎の最終位置ををpositionsに得て､
+## 描画用配列(draw_points)を生成
 func update_physics(delta: float) -> void:
 	for idx in idxs:
 		var pos = positions[idx]
@@ -97,6 +99,7 @@ func update_physics(delta: float) -> void:
 		i += 1
 
 
+## draw_pointsからグリッド線を描画
 func _draw() -> void:
 	draw_multiline(draw_points, grid_color)
 

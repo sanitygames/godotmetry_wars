@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cm2ghcjs83e2h"]
 
 [ext_resource type="Script" uid="uid://bwi6802jy7uqv" path="res://entities/enemy_99.gd" id="1_pagj3"]
-[ext_resource type="Shader" uid="uid://d13fok0pkchpy" path="res://entities/circle.gdshader" id="1_y4xwx"]
+[ext_resource type="Shader" uid="uid://d13fok0pkchpy" path="res://shaders/circle.gdshader" id="1_y4xwx"]
 [ext_resource type="Texture2D" uid="uid://ft4bfv02m05a" path="res://img/icon.svg" id="2_y4xwx"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4d44c"]

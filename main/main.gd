@@ -295,8 +295,7 @@ func _physics_process(delta: float) -> void:
 	grid.set_data(flags, positions, forces)
 	grid.update(delta)
 
-
-
+	# 十字カーソルのON/OFF
 	cursor.queue_redraw()
 	if Input.is_action_just_pressed("click_left"):
 		cursor.visible = !cursor.visible
@@ -468,10 +467,10 @@ func _on_e3_death(id: int) -> void:
 
 
 ## death処理ヘルパー
-func __death(id: int, _s: int) -> void:
+func __death(id: int, _score: int) -> void:
 	flags[id] = 0
 	positions[id] = DEF_VEC2
-	score += _s
+	score += _score
 
 
 ## Enemy-A(Bullet)が倒された際のアクション
