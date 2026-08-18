@@ -13,8 +13,8 @@ layer = 1081
 script = ExtResource("1_wf8nq")
 
 [node name="Label" type="Label" parent="." unique_id=1400459394]
-custom_minimum_size = Vector2(800, 500)
-offset_right = 40.0
-offset_bottom = 16.0
+custom_minimum_size = Vector2(800, 600)
+offset_right = 800.0
+offset_bottom = 600.0
 theme_override_styles/normal = SubResource("StyleBoxEmpty_wf8nq")
 horizontal_alignment = 2

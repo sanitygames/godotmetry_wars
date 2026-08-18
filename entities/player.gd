@@ -31,5 +31,4 @@ func move(delta: float, _d: Dictionary = {}) -> Vector2:
 
 
 func _on_area_entered(_enemy: Entity) -> void:
-	# dead.emit(_enemy.id)
-	pass
+	dead.emit(_enemy.id)

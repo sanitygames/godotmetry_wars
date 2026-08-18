@@ -17,10 +17,10 @@ const E1_FORCE := Vector2.ZERO
 const E2_FORCE := Vector2.ZERO
 const E3_FORCE := Vector2(200, 56000)
 const E9_FORCE := Vector2.ZERO
-const HIT_PARTICLE_FORCE := Vector2(100, 3000)
-const DEATH_PARTICLE_FORCE := Vector2(150, 28600)
+const HIT_PARTICLE_FORCE := Vector2(70, 3000)
+const DEATH_PARTICLE_FORCE := Vector2(150, 48600)
 
-const SCORE_TEXT := "HI-SCORE:%06d\n[%02d]SCORE:%06d\n"
+const SCORE_TEXT := "HI-SCORE:  %06d\n[%02d]SCORE:%06d\n"
 
 @export var shot_inst: PackedScene
 @export var hit_particle_inst: PackedScene
@@ -285,8 +285,8 @@ func _physics_process(delta: float) -> void:
 		DEATH_PARTICLE_ORIGIN,
 		DEATH_PARTICLE_ORIGIN + DEATH_PARTICLE_SIZE
 	):
-		forces[i].x *= 1.05
-		forces[i].y *= 0.9
+		forces[i].x *= 1.10
+		forces[i].y *= 0.8
 
 	# Update ScoreUI
 	Score.hi_score = max(Score.hi_score, score)

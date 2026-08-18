@@ -2,8 +2,8 @@ extends Node2D
 
 const GRID_SIZE := Vector2i(48, 36)
 const GRID_SPACING := 20.0
-const SPRING_K := 300.0
-const NEIGHBOR_K := 0.8
+const SPRING_K := 200.0
+const NEIGHBOR_K := 40.8
 const DAMPING := 0.90
 
 @export var grid_color: Color = Color.GREEN_YELLOW
@@ -11,9 +11,9 @@ const DAMPING := 0.90
 var rest_positions := PackedVector2Array()
 var positions := PackedVector2Array()
 var velocities := PackedVector2Array()
+var draw_points := PackedVector2Array()
 var idxs := PackedInt32Array()
 var didxs := PackedInt32Array()
-var draw_points := PackedVector2Array()
 
 var force_ps := PackedVector2Array()
 var force_ds := PackedVector2Array()
@@ -65,13 +65,13 @@ func set_data(_bs: PackedByteArray, ps: PackedVector2Array, fs: PackedVector2Arr
 func update(delta: float) -> void:
 	var start = Time.get_ticks_usec()
 	for i in forces_size:
-		var lx = floor((force_ps[i].x - force_ds[i].x) / GRID_SPACING)
-		var rx = ceil((force_ps[i].x + force_ds[i].x) / GRID_SPACING)
-		var ly = floor((force_ps[i].y - force_ds[i].x) / GRID_SPACING)
-		var ry = ceil((force_ps[i].y + force_ds[i].x) / GRID_SPACING)
+		var lx = max(0, floor((force_ps[i].x - force_ds[i].x) / GRID_SPACING))
+		var rx = min(ceil((force_ps[i].x + force_ds[i].x) / GRID_SPACING), GRID_SIZE.x)
+		var ly = max(0, floor((force_ps[i].y - force_ds[i].x) / GRID_SPACING))
+		var ry = min(ceil((force_ps[i].y + force_ds[i].x) / GRID_SPACING), GRID_SIZE.y)
 
-		for y in range(max(ly - 1, 0), min(ry + 1, GRID_SIZE.y)):
-			for x in range(max(lx - 1, 0), min(rx + 1, GRID_SIZE.x)):
+		for y in range(ly, ry):
+			for x in range(lx, rx):
 				var idx = GRID_SIZE.x * y + x
 				var distance = positions[idx].distance_to(force_ps[i])
 				if distance < force_ds[i].x:
@@ -90,12 +90,12 @@ func update(delta: float) -> void:
 func _update_positions(delta: float) -> void:
 	for idx in idxs:
 		var pos = positions[idx]
-		var f = (rest_positions[idx] - pos) * SPRING_K
-		f += (positions[idx - 1] - pos) * NEIGHBOR_K
-		f += (positions[idx + 1] - pos) * NEIGHBOR_K
-		f += (positions[idx - GRID_SIZE.y] - pos) * NEIGHBOR_K
-		f += (positions[idx + GRID_SIZE.y] - pos) * NEIGHBOR_K
-		velocities[idx] += f * delta
+		var f = (rest_positions[idx] - pos) * SPRING_K / NEIGHBOR_K
+		f += positions[idx - 1] - pos
+		f += positions[idx + 1] - pos
+		f += positions[idx - GRID_SIZE.x] - pos
+		f += positions[idx + GRID_SIZE.x] - pos
+		velocities[idx] += f * NEIGHBOR_K * delta
 		velocities[idx] *= DAMPING
 		positions[idx] += velocities[idx] * delta
 

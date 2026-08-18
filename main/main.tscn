@@ -11,7 +11,6 @@
 [ext_resource type="PackedScene" uid="uid://cm2ghcjs83e2h" path="res://entities/enemy_99.tscn" id="7_4c57u"]
 [ext_resource type="PackedScene" uid="uid://cpkjy0ko0mj1a" path="res://entities/enemy_02.tscn" id="7_efxa6"]
 [ext_resource type="PackedScene" uid="uid://dw3od1jlwaw0a" path="res://entities/death_particle.tscn" id="8_5vw27"]
-[ext_resource type="FontFile" uid="uid://xfvo2y4qm6gf" path="res://font/x16y32pxGridGazer.ttf" id="11_efxa6"]
 [ext_resource type="Script" uid="uid://crbyyyq6hjqi8" path="res://main/cursor.gd" id="12_na0o7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dg77c"]
@@ -35,8 +34,6 @@ _data = {
 "points": PackedVector2Array(0, 0, 0, 0, -400, -400, 0, 0, 0, 0, 1200, -400, 0, 0, 0, 0, 1200, 848, 0, 0, 0, 0, -400, 848, 0, 0, 0, 0, -400, -400)
 }
 point_count = 5
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_efxa6"]
 
 [node name="Main" type="Node2D" unique_id=1762312842]
 material = SubResource("ShaderMaterial_dg77c")
@@ -143,15 +140,12 @@ script = ExtResource("12_na0o7")
 [node name="ScoreLabel" type="Label" parent="UILayer" unique_id=1640683739]
 self_modulate = Color(0.97, 0.97, 0.97, 1)
 texture_filter = 1
-offset_top = 40.0
-offset_right = 224.0
-offset_bottom = 65.0
-theme_override_constants/outline_size = 4
-theme_override_fonts/font = ExtResource("11_efxa6")
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 244.0
+offset_bottom = 45.0
 theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxEmpty_efxa6")
 text = "SCORE: 000000"
-horizontal_alignment = 2
 
 [node name="ColorRect" type="ColorRect" parent="UILayer" unique_id=1796873193]
 custom_minimum_size = Vector2(800, 600)

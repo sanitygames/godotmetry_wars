@@ -1,7 +1,7 @@
 extends Entity
 
 const SPEED := 100.0
-const MAX_LIFE := 4
+const MAX_LIFE := 3
 
 var accell := 1.0
 var timer := 0.0
