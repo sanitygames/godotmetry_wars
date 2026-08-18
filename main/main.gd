@@ -3,13 +3,13 @@ extends Node2D
 const DEF_VEC2 := Vector2(9999, 9999)
 
 const PLAYER_SIZE := 1
-const SHOT_ENTITY_SIZE := 100
-const E1_ENTITY_SIZE := 30
+const SHOT_ENTITY_SIZE := 30
+const E1_ENTITY_SIZE := 20
 const E2_ENTITY_SIZE := 10
 const E3_ENTITY_SIZE := 5
-const E9_ENTITY_SIZE := 200
-const HIT_PARTICLE_SIZE := 100
-const DEATH_PARTICLE_SIZE := 20
+const E9_ENTITY_SIZE := 60
+const HIT_PARTICLE_SIZE := 30
+const DEATH_PARTICLE_SIZE := 10
 
 const PLAYER_FORCE := Vector2(40, 10000)
 const SHOT_FORCE := Vector2(20, 10000)
@@ -193,6 +193,7 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	var start = Time.get_ticks_usec()
 	# Update MainTime
 	timer += delta
 
@@ -299,6 +300,12 @@ func _physics_process(delta: float) -> void:
 	cursor.queue_redraw()
 	if Input.is_action_just_pressed("click_left"):
 		cursor.visible = !cursor.visible
+
+	var end = Time.get_ticks_usec()
+	Debugger.ticks_usec("Main._physics_update()", start, end)
+	Debugger.set_flags(
+		flags, [0,SHOT_IDX_ORIGIN, E1_IDX_ORIGIN, E2_IDX_ORIGIN, E3_IDX_ORIGIN, E9_IDX_ORIGIN, HIT_PARTICLE_ORIGIN, DEATH_PARTICLE_ORIGIN, flags.size()], ["player", "shot", "e1", "e2", "e3", "e9", "hit", "death"])
+	Debugger.update()
 
 
 

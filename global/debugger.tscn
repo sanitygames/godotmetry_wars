@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://34hh0vi7g6xo"]
+
+[ext_resource type="Script" uid="uid://2gofbfydul08" path="res://global/debugger.gd" id="1_wf8nq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wf8nq"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+
+[node name="Debugger" type="CanvasLayer" unique_id=821894511]
+layer = 1081
+script = ExtResource("1_wf8nq")
+
+[node name="Label" type="Label" parent="." unique_id=1400459394]
+custom_minimum_size = Vector2(800, 500)
+offset_right = 40.0
+offset_bottom = 16.0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_wf8nq")
+horizontal_alignment = 2

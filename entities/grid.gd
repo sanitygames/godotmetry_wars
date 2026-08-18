@@ -49,17 +49,21 @@ func _ready() -> void:
 ## force_ps: Vector2(position.x, position.y)
 ## foece_ds: Vector2(force_radius, force_power)
 func set_data(_bs: PackedByteArray, ps: PackedVector2Array, fs: PackedVector2Array) -> void:
+	var start = Time.get_ticks_usec()
 	forces_size = 0
 	for i in _bs.size():
 		if _bs[i] == 1 && fs[i] != Vector2.ZERO:
 			force_ps[forces_size] = ps[i] + Vector2(80, 80)
 			force_ds[forces_size] = fs[i]
 			forces_size += 1
+	var end = Time.get_ticks_usec()
+	Debugger.ticks_usec("Grid.set_data()", start, end)
 
 
 ## Gridがもつ質点毎のベロシティをvelocitiesに得る
 ## forceが明らかにかからない質点についてはスルー
 func update(delta: float) -> void:
+	var start = Time.get_ticks_usec()
 	for i in forces_size:
 		var lx = floor((force_ps[i].x - force_ds[i].x) / GRID_SPACING)
 		var rx = ceil((force_ps[i].x + force_ds[i].x) / GRID_SPACING)
@@ -75,13 +79,15 @@ func update(delta: float) -> void:
 					var dir = force_ps[i].direction_to(positions[idx])
 					velocities[idx] += dir * fac * force_ds[i].y * delta
 
-	update_physics(delta)
+	_update_positions(delta)
 	queue_redraw()
+	var end = Time.get_ticks_usec()
+	Debugger.ticks_usec("Grid.update()", start, end)
 
 
 ## Gridがもつ質点毎の最終位置ををpositionsに得て､
 ## 描画用配列(draw_points)を生成
-func update_physics(delta: float) -> void:
+func _update_positions(delta: float) -> void:
 	for idx in idxs:
 		var pos = positions[idx]
 		var f = (rest_positions[idx] - pos) * SPRING_K
