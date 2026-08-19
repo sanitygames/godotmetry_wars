@@ -10,6 +10,7 @@ content_margin_bottom = 20.0
 
 [node name="Debugger" type="CanvasLayer" unique_id=821894511]
 layer = 1081
+visible = false
 script = ExtResource("1_wf8nq")
 
 [node name="Label" type="Label" parent="." unique_id=1400459394]
