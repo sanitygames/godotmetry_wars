@@ -18,7 +18,7 @@ config/icon="res://img/icon.svg"
 [autoload]
 
 Sound="*uid://cukbc7fxccv3b"
-GodotplayerScore="*uid://c52qbux5u0p2p"
+GodotplayerScore="*uid://d1qnyggyerfo5"
 Score="*uid://bq0g0f5vh4ear"
 Debugger="*uid://34hh0vi7g6xo"
 
